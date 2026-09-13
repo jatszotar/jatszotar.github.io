@@ -93,7 +93,7 @@ describe('round runner', () => {
     expect(state.revealedAnswer).toBeNull();
     expect(state.input).toBe('');
     expect(state.feedbackType).toBe('wrong');
-    expect(state.feedback).toBe('9? Még egyszer!');
+    expect(state.feedback).toBe('Nem jó! Próbáld újra!');
     expect(state.awaitingAdvance).toBe(true);
   });
 

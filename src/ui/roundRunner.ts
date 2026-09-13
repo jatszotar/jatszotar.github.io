@@ -242,7 +242,7 @@ export function submitRoundAnswer<T>(
       input: '',
       revealedAnswer: null,
       lastWrongInput: wrongInput,
-      feedback: strings.wrongGiven(wrongInput),
+      feedback: strings.wrong,
       feedbackType: 'wrong',
       awaitingAdvance: true,
     };
@@ -275,7 +275,7 @@ export function submitRoundAnswer<T>(
     input: '',
     revealedAnswer: null,
     lastWrongInput: wrongInput,
-    feedback: strings.wrongGiven(wrongInput),
+    feedback: strings.wrong,
     feedbackType: 'wrong',
     awaitingAdvance: true,
   };
