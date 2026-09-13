@@ -1,6 +1,7 @@
 import { getGame } from './games/registry';
 import { applyTheme, loadTheme } from './theme/settings';
 import { applyTimerVisible, loadTimerVisible } from './timer/settings';
+import { createAppFooter } from './ui/appFooter';
 import { createAppHeader } from './ui/appHeader';
 import { renderModePicker } from './ui/modePicker';
 
@@ -20,6 +21,7 @@ shell.appendChild(createAppHeader());
 const screenRoot = document.createElement('div');
 screenRoot.className = 'app-screen';
 shell.appendChild(screenRoot);
+shell.appendChild(createAppFooter());
 appRoot.appendChild(shell);
 
 function showPicker(): void {

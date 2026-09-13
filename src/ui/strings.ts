@@ -164,4 +164,7 @@ export const strings = {
   bestTime: (text: string) => `Legjobb: ${text}`,
   newBestTime: 'Új rekord!',
   githubRepo: 'GitHub',
+  footerCopyright: '© 2026 Laszlo Gecse',
+  footerLicense: 'Apache License 2.0',
+  footerLicenseSuffix: 'licenc alatt.',
 };

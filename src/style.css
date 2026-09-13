@@ -94,6 +94,25 @@ body {
   color: var(--muted);
 }
 
+.app-footer {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--muted);
+  padding: 0 0.5rem 0.25rem;
+}
+
+.app-footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.app-footer a:hover {
+  color: var(--accent);
+}
+
 /* Fixed box on every screen so navigating between games does not resize it. */
 .card {
   width: min(100%, 42rem);
