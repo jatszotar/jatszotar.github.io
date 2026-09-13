@@ -51,11 +51,6 @@ export function renderModePicker(
     const section = document.createElement('section');
     section.className = 'game-category';
 
-    const heading = document.createElement('h2');
-    heading.className = 'game-category-title';
-    heading.textContent = strings.gameCategoryLabel(group.category);
-    section.appendChild(heading);
-
     const grid = document.createElement('div');
     grid.className = 'game-grid';
 

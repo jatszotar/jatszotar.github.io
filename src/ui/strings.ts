@@ -7,20 +7,10 @@ import type { CompareLevel } from '../compare/types';
 import type { ClockLevel } from '../clock/types';
 import type { SimonLevel } from '../simon/types';
 import type { WordsLevel } from '../words/types';
-import type { GameCategory } from '../games/registry';
 
 export const strings = {
   appName: 'Játszótár',
   chooseGame: 'Mit játszunk?',
-  gameCategoryLabel: (category: GameCategory) => {
-    if (category === 'simple') {
-      return 'Egyszerű';
-    }
-    if (category === 'math') {
-      return 'Matek';
-    }
-    return 'Nehéz';
-  },
   countingTitle: 'Számlálás',
   sequenceTitle: 'Számsor',
   compareTitle: 'Kisebb-nagyobb',
