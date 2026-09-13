@@ -58,6 +58,7 @@ type QuizMountOptionsBase<TQuestion, TLevel> = {
     state: RoundRunnerState<TQuestion>,
   ) => HTMLElement;
   maxInputDigits?: number;
+  inlineAnswer?: boolean;
   extraHomeContent?: (card: HTMLDivElement) => void;
 };
 
@@ -234,11 +235,13 @@ export function createQuizMount<TQuestion, TLevel>(
         };
 
         if (options.inputMode === 'keypad') {
-          const answerBox = document.createElement('div');
-          answerBox.className = `answer-display ${state.feedbackType}`;
-          answerBox.textContent =
-            state.revealedAnswer ?? (state.input || '?');
-          card.appendChild(answerBox);
+          if (!options.inlineAnswer) {
+            const answerBox = document.createElement('div');
+            answerBox.className = `answer-display ${state.feedbackType}`;
+            answerBox.textContent =
+              state.revealedAnswer ?? (state.input || '?');
+            card.appendChild(answerBox);
+          }
 
           const keypadHandlers = {
             disabled: state.awaitingAdvance,

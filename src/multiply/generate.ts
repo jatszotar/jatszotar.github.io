@@ -4,6 +4,10 @@ import {
   numericCorrectAnswer,
 } from '../game/round';
 import { pickOne, randomInt, type Rng } from '../game/random';
+import {
+  buildOperandEquation,
+  type EquationAnswerState,
+} from '../ui/equationDisplay';
 import type {
   MultiplyBlank,
   MultiplyLevel,
@@ -70,6 +74,20 @@ export function generateMultiplyRound(
 
 export const checkMultiplyAnswer = checkNumericAnswer;
 export const multiplyCorrectAnswer = numericCorrectAnswer;
+
+export function renderMultiplyPrompt(
+  question: MultiplyQuestion,
+  state: EquationAnswerState,
+): HTMLElement {
+  return buildOperandEquation({
+    left: question.a,
+    right: question.b,
+    result: question.a * question.b,
+    op: '×',
+    blank: question.blank,
+    state,
+  });
+}
 
 export function formatMultiplyQuestion(question: MultiplyQuestion): string {
   const left =

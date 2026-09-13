@@ -1,4 +1,10 @@
 import { createQuizMount } from '../ui/quizMount';
+import {
+  blankValueFromState,
+  createBlankSlot,
+  createEquationRow,
+  createTextPart,
+} from '../ui/equationDisplay';
 import { strings } from '../ui/strings';
 import {
   checkSequenceAnswer,
@@ -6,19 +12,31 @@ import {
   sequenceCorrectAnswer,
 } from './generate';
 import { SEQUENCE_LEVELS, type SequenceQuestion } from './types';
+import type { RoundRunnerState } from '../ui/roundRunner';
 
-function renderSequencePrompt(question: SequenceQuestion): HTMLElement {
-  const container = document.createElement('div');
-  container.className = 'sequence-display';
+function renderSequencePrompt(
+  question: SequenceQuestion,
+  state: RoundRunnerState<SequenceQuestion>,
+): HTMLElement {
+  const parts: HTMLElement[] = [];
 
   for (const label of question.labels) {
-    const part = document.createElement('span');
-    part.className = label === null ? 'seq-blank' : 'seq-num';
-    part.textContent = label === null ? '?' : label;
-    container.appendChild(part);
+    if (label === null) {
+      parts.push(
+        createBlankSlot({
+          value: blankValueFromState(state),
+          feedbackType: state.feedbackType,
+        }),
+      );
+      continue;
+    }
+    const part = createTextPart(label);
+    part.classList.add('seq-num');
+    parts.push(part);
   }
 
-  return container;
+  const row = createEquationRow(parts, 'sequence-display');
+  return row;
 }
 
 export const mountSequence = createQuizMount({
@@ -30,7 +48,8 @@ export const mountSequence = createQuizMount({
   questionKey: (q) => q.id,
   checkAnswer: checkSequenceAnswer,
   getCorrectAnswer: sequenceCorrectAnswer,
-  renderPrompt: (question) => renderSequencePrompt(question),
+  renderPrompt: (question, state) => renderSequencePrompt(question, state),
   inputMode: 'keypad',
+  inlineAnswer: true,
   maxInputDigits: 3,
 });

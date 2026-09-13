@@ -292,6 +292,39 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.equation-part {
+  white-space: nowrap;
+}
+
+.blank-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.4rem;
+  border: 3px solid var(--accent);
+  border-radius: 0.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.blank-slot-wide {
+  min-width: 3.25rem;
+}
+
+.blank-slot.correct {
+  border-color: var(--correct-border);
+  color: var(--correct-text);
+}
+
+.blank-slot.wrong {
+  border-color: var(--wrong-border);
+  color: var(--wrong-text);
+}
+
 .feedback {
   min-height: 1.75rem;
   text-align: center;
@@ -551,16 +584,10 @@ body {
   font-weight: 800;
 }
 
-.seq-num,
-.seq-blank {
+.seq-num {
   min-width: 2.5rem;
   text-align: center;
   white-space: nowrap;
-}
-
-.seq-blank {
-  color: var(--accent);
-  border-bottom: 4px solid var(--accent);
 }
 
 .count-field {
@@ -610,10 +637,8 @@ body {
   word-break: break-word;
 }
 
-.compare-op {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--accent);
+.compare-blank {
+  justify-self: center;
 }
 
 .multiply-equation {

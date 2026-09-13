@@ -2,9 +2,9 @@ import { createQuizMount } from '../ui/quizMount';
 import { strings } from '../ui/strings';
 import {
   checkMultiplyAnswer,
-  formatMultiplyQuestion,
   generateMultiplyRound,
   multiplyCorrectAnswer,
+  renderMultiplyPrompt,
 } from './generate';
 import { MULTIPLY_LEVELS } from './types';
 
@@ -17,12 +17,8 @@ export const mountMultiply = createQuizMount({
   questionKey: (q) => q.id,
   checkAnswer: checkMultiplyAnswer,
   getCorrectAnswer: multiplyCorrectAnswer,
-  renderPrompt: (question) => {
-    const el = document.createElement('div');
-    el.className = 'equation multiply-equation';
-    el.textContent = formatMultiplyQuestion(question);
-    return el;
-  },
+  renderPrompt: (question, state) => renderMultiplyPrompt(question, state),
   inputMode: 'keypad',
+  inlineAnswer: true,
   maxInputDigits: 2,
 });

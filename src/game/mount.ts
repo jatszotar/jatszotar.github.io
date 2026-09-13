@@ -1,5 +1,5 @@
 import { answerFor, generateRound, problemKey } from './generate';
-import { isCorrectAnswer, formatProblem } from './check';
+import { isCorrectAnswer, renderMathPrompt } from './check';
 import {
   GAME_LEVELS,
   type GameLevel,
@@ -43,13 +43,6 @@ function createOperationFilter(
   return container;
 }
 
-function renderMathPrompt(problem: ReturnType<typeof generateRound>[number]): HTMLElement {
-  const equation = document.createElement('div');
-  equation.className = 'equation multiply-equation';
-  equation.textContent = formatProblem(problem);
-  return equation;
-}
-
 export function mountMath(root: HTMLElement, onExit: () => void): void {
   let operationFilter: OperationFilter = 'mixed';
 
@@ -70,8 +63,9 @@ export function mountMath(root: HTMLElement, onExit: () => void): void {
     checkAnswer: (problem, input) =>
       isCorrectAnswer(problem, Number(input)),
     getCorrectAnswer: (problem) => String(answerFor(problem)),
-    renderPrompt: (question) => renderMathPrompt(question),
+    renderPrompt: (question, state) => renderMathPrompt(question, state),
     inputMode: 'keypad',
+    inlineAnswer: true,
     maxInputDigits: 2,
     extraHomeContent: (card) => {
       card.appendChild(
