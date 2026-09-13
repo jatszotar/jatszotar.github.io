@@ -646,6 +646,12 @@ body {
   font-weight: 800;
 }
 
+.words-slot.is-pending {
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 600;
+}
+
 .letter-tile-grid {
   display: flex;
   flex-wrap: wrap;
@@ -657,6 +663,21 @@ body {
   min-width: 3rem;
   min-height: 3rem;
   font-size: 1.25rem;
+  font-weight: 800;
+  padding: 0.5rem 0.75rem;
+}
+
+.words-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.words-delete {
+  min-width: 3rem;
+  min-height: 3rem;
+  font-size: 1.35rem;
   font-weight: 800;
   padding: 0.5rem 0.75rem;
 }

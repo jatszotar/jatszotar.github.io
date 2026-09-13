@@ -31,6 +31,7 @@ export interface QuizInputContext<TQuestion> {
   disabled: boolean;
   onSubmit: (input: string) => void;
   requestRender: () => void;
+  registerCleanup: (fn: () => void) => void;
 }
 
 type QuizMountOptionsBase<TQuestion, TLevel> = {
@@ -237,6 +238,14 @@ export function createQuizMount<TQuestion, TLevel>(
           });
           card.appendChild(choicePad);
         } else {
+          const registerCleanup = (fn: () => void) => {
+            const baseCleanup = cleanup;
+            cleanup = () => {
+              baseCleanup?.();
+              fn();
+            };
+          };
+
           options.renderInput({
             card,
             question,
@@ -244,6 +253,7 @@ export function createQuizMount<TQuestion, TLevel>(
             disabled: state.awaitingAdvance,
             onSubmit: submitInput,
             requestRender: () => render(),
+            registerCleanup,
           });
         }
 

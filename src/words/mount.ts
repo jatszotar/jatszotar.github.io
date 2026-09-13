@@ -6,6 +6,16 @@ import {
   generateWordsRound,
   wordsCorrectAnswer,
 } from './generate';
+import {
+  canDelete,
+  consumeKey,
+  createWordsTileState,
+  deleteLast,
+  isTileUsed,
+  pickTile,
+  selectedGraphemes,
+  type WordsTileState,
+} from './input';
 import { WORDS_LEVELS, type WordsLevel, type WordsQuestion } from './types';
 
 function renderWordsPrompt(question: WordsQuestion): HTMLElement {
@@ -15,11 +25,35 @@ function renderWordsPrompt(question: WordsQuestion): HTMLElement {
   return hint;
 }
 
+function maybeSubmit(
+  tiles: WordsTileState,
+  question: WordsQuestion,
+  disabled: boolean,
+  onSubmit: (input: string) => void,
+  requestRender: () => void,
+): void {
+  if (disabled) {
+    return;
+  }
+
+  const target = question.entry.graphemes.join('');
+  const selected = selectedGraphemes(tiles, question.shuffled).join('');
+
+  if (tiles.selectedTiles.length === question.entry.graphemes.length) {
+    onSubmit(selected);
+    return;
+  }
+
+  if (selected === target) {
+    onSubmit(target);
+    return;
+  }
+
+  requestRender();
+}
+
 export function mountWords(root: HTMLElement, onExit: () => void): void {
-  const tileState = new Map<
-    string,
-    { selected: string[]; usedTiles: boolean[] }
-  >();
+  const tileState = new Map<string, WordsTileState>();
 
   createQuizMount({
     gameId: 'words',
@@ -32,23 +66,36 @@ export function mountWords(root: HTMLElement, onExit: () => void): void {
     getCorrectAnswer: wordsCorrectAnswer,
     renderPrompt: (question) => renderWordsPrompt(question),
     inputMode: 'custom',
-    renderInput: ({ card, question, state, disabled, onSubmit, requestRender }) => {
+    renderInput: ({
+      card,
+      question,
+      state,
+      disabled,
+      onSubmit,
+      requestRender,
+      registerCleanup,
+    }) => {
       const key = `${state.currentIndex}:${question.id}:${state.roundPhase}`;
       if (!tileState.has(key)) {
-        tileState.set(key, {
-          selected: [],
-          usedTiles: question.shuffled.map(() => false),
-        });
+        tileState.set(key, createWordsTileState());
       }
       const tiles = tileState.get(key)!;
-      const target = question.entry.graphemes.join('');
+      const graphemeCount = question.entry.graphemes.length;
+      const selected = selectedGraphemes(tiles, question.shuffled);
 
       const answerRow = document.createElement('div');
       answerRow.className = 'words-answer';
-      for (let i = 0; i < target.length; i += 1) {
+      for (let i = 0; i < graphemeCount; i += 1) {
         const slot = document.createElement('span');
         slot.className = 'words-slot';
-        slot.textContent = tiles.selected[i] ?? '';
+        if (i < selected.length) {
+          slot.textContent = selected[i];
+        } else if (i === selected.length && tiles.pending.length > 0) {
+          slot.classList.add('is-pending');
+          slot.textContent = tiles.pending;
+        } else {
+          slot.textContent = '';
+        }
         answerRow.appendChild(slot);
       }
       card.appendChild(answerRow);
@@ -61,31 +108,89 @@ export function mountWords(root: HTMLElement, onExit: () => void): void {
         tile.type = 'button';
         tile.className = 'btn letter-tile';
         tile.textContent = grapheme;
-        tile.disabled = disabled || tiles.usedTiles[tileIndex];
+        tile.disabled = disabled || isTileUsed(tiles, tileIndex);
         tile.addEventListener('click', () => {
-          if (disabled || tiles.usedTiles[tileIndex]) {
+          const current = tileState.get(key)!;
+          if (disabled || isTileUsed(current, tileIndex)) {
             return;
           }
           void unlockAudio();
-          tiles.selected.push(question.shuffled[tileIndex]);
-          tiles.usedTiles[tileIndex] = true;
-
-          if (tiles.selected.join('') === target) {
-            onSubmit(target);
-            return;
-          }
-
-          if (tiles.selected.length >= target.length) {
-            onSubmit(tiles.selected.join(''));
-            return;
-          }
-
-          requestRender();
+          tileState.set(key, pickTile(current, tileIndex));
+          maybeSubmit(
+            tileState.get(key)!,
+            question,
+            disabled,
+            onSubmit,
+            requestRender,
+          );
         });
         tileGrid.appendChild(tile);
       });
 
       card.appendChild(tileGrid);
+
+      const actions = document.createElement('div');
+      actions.className = 'words-actions';
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'btn letter-tile words-delete';
+      deleteButton.textContent = '⌫';
+      deleteButton.setAttribute('aria-label', strings.wordsUndo);
+      deleteButton.title = strings.wordsUndo;
+      deleteButton.disabled = disabled || !canDelete(tiles);
+      deleteButton.addEventListener('click', () => {
+        const current = tileState.get(key)!;
+        if (disabled || !canDelete(current)) {
+          return;
+        }
+        void unlockAudio();
+        tileState.set(key, deleteLast(current));
+        requestRender();
+      });
+      actions.appendChild(deleteButton);
+      card.appendChild(actions);
+
+      const controller = new AbortController();
+      registerCleanup(() => {
+        controller.abort();
+      });
+
+      const handleKeyboard = (event: KeyboardEvent) => {
+        const current = tileState.get(key)!;
+        if (disabled || event.ctrlKey || event.metaKey || event.altKey) {
+          return;
+        }
+
+        if (event.key === 'Backspace') {
+          if (!canDelete(current)) {
+            return;
+          }
+          event.preventDefault();
+          void unlockAudio();
+          tileState.set(key, deleteLast(current));
+          requestRender();
+          return;
+        }
+
+        if (!/^\p{L}$/u.test(event.key)) {
+          return;
+        }
+
+        void unlockAudio();
+        tileState.set(key, consumeKey(current, event.key, question.shuffled));
+        maybeSubmit(
+          tileState.get(key)!,
+          question,
+          disabled,
+          onSubmit,
+          requestRender,
+        );
+      };
+
+      window.addEventListener('keydown', handleKeyboard, {
+        signal: controller.signal,
+      });
     },
   })(root, onExit);
 }

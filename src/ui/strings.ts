@@ -104,6 +104,7 @@ export const strings = {
   simonProgress: (current: number, total: number) => `${current} / ${total}`,
   wordsLevelLabel: (level: WordsLevel) =>
     `${level.minGraphemes}–${level.maxGraphemes} betű`,
+  wordsUndo: 'Vissza egy betű',
   pairsFound: (found: number, total: number) => `${found} / ${total} pár`,
   moves: (count: number) => `${count} lépés`,
   memoryWin: 'Megtaláltad az összeset!',
