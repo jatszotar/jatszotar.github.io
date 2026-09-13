@@ -7,6 +7,7 @@ import {
   recordRoundResult,
   saveGameProgress,
 } from '../progress/store';
+import { loadTimerVisible } from '../timer/settings';
 import {
   elapsedMs,
   pauseStopwatch,
@@ -317,6 +318,7 @@ export function createQuizMount<TQuestion, TLevel>(
       }
 
       if (screen === 'summary' && lastResult) {
+        const timerVisible = loadTimerVisible();
         renderQuizSummary(root, {
           levelIndex,
           maxLevelIndex,
@@ -324,9 +326,9 @@ export function createQuizMount<TQuestion, TLevel>(
           progress,
           levelLabel: (index) =>
             options.levelLabel(options.levels[index], index),
-          elapsedMs: lastElapsedMs,
-          bestMs: lastBestMs,
-          isNewBest: lastIsNewBest,
+          elapsedMs: timerVisible ? lastElapsedMs : undefined,
+          bestMs: timerVisible ? lastBestMs : undefined,
+          isNewBest: timerVisible ? lastIsNewBest : false,
           onReplay: () => startRound(levelIndex),
           onNextLevel: () => startRound(levelIndex + 1),
           onHome: () => {

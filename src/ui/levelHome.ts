@@ -1,6 +1,7 @@
 import type { GameProgress } from '../progress/store';
 import { isLevelUnlocked } from '../progress/store';
 import { formatDuration } from '../timer/format';
+import { loadTimerVisible } from '../timer/settings';
 import { createCard, createPlayHeader, createSectionTitle } from './shell';
 import { strings } from './strings';
 
@@ -47,7 +48,9 @@ export function renderLevelHome<TLevel>(
     const bestMs = options.progress.bestTimesMs?.[index];
     const statusText = unlocked ? strings.unlocked : strings.locked;
     const bestText =
-      bestMs !== undefined ? strings.bestTime(formatDuration(bestMs)) : '';
+      loadTimerVisible() && bestMs !== undefined
+        ? strings.bestTime(formatDuration(bestMs))
+        : '';
     button.innerHTML = `
       <div>${options.levelLabel(level, index)}</div>
       <small>${statusText}${bestText ? ` · ${bestText}` : ''}</small>
