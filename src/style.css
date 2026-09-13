@@ -115,8 +115,8 @@ body {
 
 /* Fixed box on every screen so navigating between games does not resize it. */
 .card {
-  width: min(100%, 42rem);
-  min-height: min(40rem, calc(100vh - 3rem - var(--app-header-h)));
+  width: min(100%, calc(42rem + 5px));
+  min-height: min(calc(40rem + 5px), calc(100vh - 3rem - var(--app-header-h)));
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 1.5rem;
