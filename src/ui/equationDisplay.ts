@@ -9,11 +9,23 @@ export interface BlankSlotOptions {
 export interface EquationAnswerState {
   input: string;
   revealedAnswer: string | null;
+  lastWrongInput?: string | null;
   feedbackType: EquationFeedbackType;
 }
 
 export function blankValueFromState(state: EquationAnswerState): string {
+  if (state.feedbackType === 'wrong' && state.lastWrongInput) {
+    return state.lastWrongInput;
+  }
   return state.revealedAnswer ?? state.input;
+}
+
+export function answerDisplayValueFromState(state: EquationAnswerState): string {
+  if (state.feedbackType === 'wrong' && state.lastWrongInput) {
+    return state.lastWrongInput;
+  }
+  const value = state.revealedAnswer ?? state.input;
+  return value.length > 0 ? value : '?';
 }
 
 export function createBlankSlot(options: BlankSlotOptions): HTMLElement {

@@ -54,6 +54,7 @@ export interface RoundRunnerState<T> {
   retryDone: number;
   input: string;
   revealedAnswer: string | null;
+  lastWrongInput: string | null;
   feedback: string;
   feedbackType: 'none' | 'correct' | 'wrong';
   awaitingAdvance: boolean;
@@ -83,6 +84,7 @@ export function createRoundRunnerState<T>(
     retryDone: 0,
     input: '',
     revealedAnswer: null,
+    lastWrongInput: null,
     feedback: '',
     feedbackType: 'none',
     awaitingAdvance: false,
@@ -118,6 +120,7 @@ function enterRetryPhase<T>(state: RoundRunnerState<T>): RoundRunnerState<T> {
     retryDone: 0,
     input: '',
     revealedAnswer: null,
+    lastWrongInput: null,
     feedback: strings.retryStart,
     feedbackType: 'none',
     awaitingAdvance: false,
@@ -149,6 +152,7 @@ function advanceToNextQuestion<T>(
     currentIndex: state.currentIndex + 1,
     input: '',
     revealedAnswer: null,
+    lastWrongInput: null,
     feedback: '',
     feedbackType: 'none',
     awaitingAdvance: false,
@@ -192,6 +196,7 @@ export function submitRoundAnswer<T>(
           missedQuestions: remaining,
           input: '',
           revealedAnswer: null,
+          lastWrongInput: null,
           feedback: '',
           feedbackType: 'none',
           awaitingAdvance: false,
@@ -225,7 +230,7 @@ export function submitRoundAnswer<T>(
   }
 
   playWrong();
-  const correctAnswer = config.getCorrectAnswer(question);
+  const wrongInput = state.input;
 
   if (state.roundPhase === 'retry') {
     const missedQuestions = requeueMissedQuestion(
@@ -235,8 +240,9 @@ export function submitRoundAnswer<T>(
     const nextSession: RoundRunnerState<T> = {
       ...state,
       input: '',
-      revealedAnswer: correctAnswer,
-      feedback: strings.wrong,
+      revealedAnswer: null,
+      lastWrongInput: wrongInput,
+      feedback: strings.wrongGiven(wrongInput),
       feedbackType: 'wrong',
       awaitingAdvance: true,
     };
@@ -248,6 +254,7 @@ export function submitRoundAnswer<T>(
         missedQuestions,
         input: '',
         revealedAnswer: null,
+        lastWrongInput: null,
         feedback: '',
         feedbackType: 'none',
         awaitingAdvance: false,
@@ -266,8 +273,9 @@ export function submitRoundAnswer<T>(
     ...state,
     missedQuestions,
     input: '',
-    revealedAnswer: correctAnswer,
-    feedback: strings.wrong,
+    revealedAnswer: null,
+    lastWrongInput: wrongInput,
+    feedback: strings.wrongGiven(wrongInput),
     feedbackType: 'wrong',
     awaitingAdvance: true,
   };

@@ -4,6 +4,7 @@ export interface ChoicePadOptions {
   choices: string[];
   disabled?: boolean;
   variant?: ChoiceVariant;
+  wrongChoice?: string | null;
   onChoice: (choice: string) => void;
 }
 
@@ -21,6 +22,9 @@ export function createChoicePad(options: ChoicePadOptions): HTMLDivElement {
       variant === 'wide' ? 'btn choice-btn choice-btn-wide' : 'btn choice-btn';
     button.textContent = choice;
     button.disabled = disabled;
+    if (options.wrongChoice === choice) {
+      button.classList.add('choice-wrong');
+    }
     button.addEventListener('click', () => {
       if (!disabled) {
         options.onChoice(choice);

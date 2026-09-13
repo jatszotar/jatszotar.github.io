@@ -28,6 +28,7 @@ import {
   type RoundRunnerState,
 } from './roundRunner';
 import { createCard, createPlayHeader } from './shell';
+import { answerDisplayValueFromState } from './equationDisplay';
 import { createKeypad, attachKeypadKeyboard } from './keypad';
 import { createChoicePad, type ChoiceVariant } from './choicePad';
 import { createTimerDisplay, type TimerDisplay } from './timerDisplay';
@@ -252,8 +253,7 @@ export function createQuizMount<TQuestion, TLevel>(
           if (!options.inlineAnswer) {
             const answerBox = document.createElement('div');
             answerBox.className = `answer-display ${state.feedbackType}`;
-            answerBox.textContent =
-              state.revealedAnswer ?? (state.input || '?');
+            answerBox.textContent = answerDisplayValueFromState(state);
             body.appendChild(answerBox);
           }
 
@@ -267,6 +267,7 @@ export function createQuizMount<TQuestion, TLevel>(
               onChange({
                 ...state,
                 input: state.input + digit,
+                lastWrongInput: null,
                 feedback: '',
                 feedbackType: 'none',
               });
@@ -275,6 +276,7 @@ export function createQuizMount<TQuestion, TLevel>(
               onChange({
                 ...state,
                 input: '',
+                lastWrongInput: null,
                 feedback: '',
                 feedbackType: 'none',
               });
@@ -305,6 +307,8 @@ export function createQuizMount<TQuestion, TLevel>(
             choices,
             disabled: state.awaitingAdvance,
             variant: options.choiceVariant?.(question),
+            wrongChoice:
+              state.feedbackType === 'wrong' ? state.lastWrongInput : null,
             onChoice: (choice) => {
               submitRoundChoice(state, config, choice, onComplete, onChange);
             },

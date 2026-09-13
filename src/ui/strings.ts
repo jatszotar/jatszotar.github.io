@@ -118,6 +118,7 @@ export const strings = {
   submit: 'Kész',
   correct: 'Ügyes vagy!',
   wrong: 'Próbáld újra!',
+  wrongGiven: (value: string) => `${value}? Még egyszer!`,
   roundEnd: 'Szép munka!',
   replay: 'Újra',
   next: 'Következő',

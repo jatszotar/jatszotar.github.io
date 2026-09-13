@@ -81,6 +81,22 @@ describe('round runner', () => {
     expect(result).toEqual({ correct: 3, total: 3 });
   });
 
+  it('keeps the child answer visible on wrong without revealing the correct one', () => {
+    let state = createRoundRunnerState(config);
+    const onChange = (next: typeof state) => {
+      state = next;
+    };
+
+    submitRoundAnswer({ ...state, input: '9' }, config, () => {}, onChange);
+
+    expect(state.lastWrongInput).toBe('9');
+    expect(state.revealedAnswer).toBeNull();
+    expect(state.input).toBe('');
+    expect(state.feedbackType).toBe('wrong');
+    expect(state.feedback).toBe('9? Még egyszer!');
+    expect(state.awaitingAdvance).toBe(true);
+  });
+
   it('enters retry after main phase with missed questions', () => {
     let state = createRoundRunnerState(config);
     const onChange = (next: typeof state) => {
