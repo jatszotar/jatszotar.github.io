@@ -13,8 +13,8 @@ export interface WordsQuestion {
 }
 
 export const WORDS_LEVELS: WordsLevel[] = [
-  { minGraphemes: 3, maxGraphemes: 4, allowDigraphs: false },
-  { minGraphemes: 5, maxGraphemes: 5, allowDigraphs: false },
+  { minGraphemes: 2, maxGraphemes: 4, allowDigraphs: false },
+  { minGraphemes: 3, maxGraphemes: 5, allowDigraphs: true },
   { minGraphemes: 6, maxGraphemes: 7, allowDigraphs: true },
   { minGraphemes: 8, maxGraphemes: 12, allowDigraphs: true },
 ];

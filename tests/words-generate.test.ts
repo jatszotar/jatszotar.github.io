@@ -11,6 +11,7 @@ import {
   generateWordsQuestion,
   generateWordsRound,
 } from '../src/words/generate';
+import { ROUND_SIZE } from '../src/game/types';
 import { WORDS_LEVELS } from '../src/words/types';
 
 describe('word bank', () => {
@@ -26,6 +27,21 @@ describe('word bank', () => {
     }
   });
 
+  it('provides at least ROUND_SIZE words for every level', () => {
+    for (const level of WORDS_LEVELS) {
+      expect(wordsForLevel(level).length).toBeGreaterThanOrEqual(ROUND_SIZE);
+    }
+  });
+
+  it('includes every bank word in at least one level', () => {
+    for (const entry of WORD_BANK) {
+      const matched = WORDS_LEVELS.some((level) =>
+        wordsForLevel(level).some((candidate) => candidate.id === entry.id),
+      );
+      expect(matched).toBe(true);
+    }
+  });
+
   it('keeps unique word ids', () => {
     const ids = WORD_BANK.map((entry) => entry.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -35,6 +51,7 @@ describe('word bank', () => {
 describe('words generate', () => {
   it('respects grapheme count levels without digraphs', () => {
     const q = generateWordsQuestion(WORDS_LEVELS[0], () => 0.1);
+    expect(graphemeCount(q.entry)).toBeGreaterThanOrEqual(2);
     expect(graphemeCount(q.entry)).toBeLessThanOrEqual(4);
     expect(hasDigraph(q.entry)).toBe(false);
     expect(checkWordsAnswer(q, q.entry.graphemes.join(''))).toBe(true);
