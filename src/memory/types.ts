@@ -93,6 +93,14 @@ export function getMemorySize(key: MemorySizeKey): MemorySize {
   return size;
 }
 
+export function memorySizeIndex(key: MemorySizeKey): number {
+  const index = MEMORY_SIZES.findIndex((entry) => entry.key === key);
+  if (index < 0) {
+    throw new Error(`Unknown memory size: ${key}`);
+  }
+  return index;
+}
+
 export function getSymbolPool(sizeKey: MemorySizeKey): MemorySymbol[] {
   const { pool } = getMemorySize(sizeKey);
   return pool === 'tricky' ? MEMORY_TRICKY_SYMBOLS : MEMORY_SYMBOLS;

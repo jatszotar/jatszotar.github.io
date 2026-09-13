@@ -7,8 +7,7 @@ import {
 } from '../memory/game';
 import type { MemoryGame, MemorySizeKey, MemoryWinResult } from '../memory/types';
 import { getMemorySize, getSymbolById } from '../memory/types';
-import { createBackButton } from './backButton';
-import { createHeaderActions } from './headerActions';
+import { createPlayHeader } from './shell';
 import { strings } from './strings';
 
 export interface MemoryPlaySession {
@@ -63,6 +62,7 @@ export function renderMemoryPlay(
   session: MemoryPlaySession,
   onExit: () => void,
   onWin: (result: MemoryWinResult) => void,
+  timerElement?: HTMLElement,
 ): void {
   playCleanup?.();
   root.innerHTML = '';
@@ -86,17 +86,15 @@ export function renderMemoryPlay(
   const card = document.createElement('div');
   card.className = 'card';
 
-  const header = document.createElement('div');
-  header.className = 'play-header';
-
-  header.appendChild(createBackButton(onExit));
-
-  const status = document.createElement('span');
-  status.className = 'play-progress';
-  updateStatus(status, game);
-  header.appendChild(status);
-
-  header.appendChild(createHeaderActions());
+  const header = createPlayHeader({
+    onBack: onExit,
+    progressText: strings.pairsFound(game.matchedPairs, game.totalPairs),
+    centerExtra: timerElement,
+  });
+  const status = header.querySelector<HTMLElement>('.play-progress');
+  if (!status) {
+    throw new Error('Missing play progress element');
+  }
   card.appendChild(header);
 
   const moves = document.createElement('div');

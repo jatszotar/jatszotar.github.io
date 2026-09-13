@@ -1,9 +1,17 @@
 import type { MemoryWinResult } from '../memory/types';
+import { formatDuration } from '../timer/format';
 import { strings } from './strings';
+
+export interface MemorySummaryTimerOptions {
+  elapsedMs?: number;
+  bestMs?: number;
+  isNewBest?: boolean;
+}
 
 export function renderMemorySummary(
   root: HTMLElement,
   result: MemoryWinResult,
+  timer: MemorySummaryTimerOptions,
   onReplay: () => void,
   onHome: () => void,
 ): void {
@@ -21,6 +29,27 @@ export function renderMemorySummary(
   score.className = 'summary-score';
   score.textContent = strings.moves(result.moves);
   card.appendChild(score);
+
+  if (timer.elapsedMs !== undefined) {
+    const time = document.createElement('div');
+    time.className = 'summary-time';
+    time.textContent = strings.elapsedTime(formatDuration(timer.elapsedMs));
+    card.appendChild(time);
+
+    if (timer.bestMs !== undefined) {
+      const best = document.createElement('div');
+      best.className = 'summary-best-time';
+      best.textContent = strings.bestTime(formatDuration(timer.bestMs));
+      card.appendChild(best);
+    }
+
+    if (timer.isNewBest) {
+      const record = document.createElement('div');
+      record.className = 'summary-new-best';
+      record.textContent = strings.newBestTime;
+      card.appendChild(record);
+    }
+  }
 
   const message = document.createElement('div');
   message.className = 'summary-message';
