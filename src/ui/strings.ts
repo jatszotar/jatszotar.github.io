@@ -163,4 +163,5 @@ export const strings = {
   elapsedTime: (text: string) => `Idő: ${text}`,
   bestTime: (text: string) => `Legjobb: ${text}`,
   newBestTime: 'Új rekord!',
+  githubRepo: 'GitHub',
 };

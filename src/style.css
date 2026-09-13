@@ -260,6 +260,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
   flex: 0 0 auto;
   width: 2.6rem;
   height: 2.6rem;
