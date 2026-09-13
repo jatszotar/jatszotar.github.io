@@ -18,18 +18,30 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
   const header = document.createElement('div');
   header.className = 'play-header';
 
-  if (options.onBack) {
-    header.appendChild(createBackButton(options.onBack));
-  } else {
-    header.appendChild(document.createElement('span'));
-  }
-
   if (options.titleText) {
+    header.classList.add('play-header-titled');
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'play-header-toolbar';
+
+    if (options.onBack) {
+      toolbar.appendChild(createBackButton(options.onBack));
+    }
+
+    toolbar.appendChild(createHeaderActions());
+    header.appendChild(toolbar);
+
     const title = document.createElement('h1');
     title.className = 'screen-title';
     title.textContent = options.titleText;
     header.appendChild(title);
   } else {
+    if (options.onBack) {
+      header.appendChild(createBackButton(options.onBack));
+    } else {
+      header.appendChild(document.createElement('span'));
+    }
+
     const center = document.createElement('div');
     center.className = 'play-header-center';
 
@@ -45,9 +57,9 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
     }
 
     header.appendChild(center);
+    header.appendChild(createHeaderActions());
   }
 
-  header.appendChild(createHeaderActions());
   return header;
 }
 

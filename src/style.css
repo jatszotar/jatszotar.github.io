@@ -251,12 +251,39 @@ body {
   display: none;
 }
 
-.play-header .back-toggle {
+.play-header:not(.play-header-titled) .back-toggle {
   justify-self: start;
 }
 
-.play-header .header-actions {
+.play-header:not(.play-header-titled) .header-actions {
   justify-self: end;
+}
+
+.play-header-titled {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.play-header-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.play-header-toolbar .back-toggle {
+  margin-right: auto;
+}
+
+.play-header-toolbar .header-actions {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+.play-header-titled .screen-title {
+  width: 100%;
 }
 
 .header-actions {
