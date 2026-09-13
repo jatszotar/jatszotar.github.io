@@ -16,32 +16,24 @@ export interface PlayHeaderOptions {
 
 export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
   const header = document.createElement('div');
-  header.className = 'play-header';
+  header.className = 'play-header play-header-stacked';
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'play-header-toolbar';
+
+  if (options.onBack) {
+    toolbar.appendChild(createBackButton(options.onBack));
+  }
+
+  toolbar.appendChild(createHeaderActions());
+  header.appendChild(toolbar);
 
   if (options.titleText) {
-    header.classList.add('play-header-titled');
-
-    const toolbar = document.createElement('div');
-    toolbar.className = 'play-header-toolbar';
-
-    if (options.onBack) {
-      toolbar.appendChild(createBackButton(options.onBack));
-    }
-
-    toolbar.appendChild(createHeaderActions());
-    header.appendChild(toolbar);
-
     const title = document.createElement('h1');
     title.className = 'screen-title';
     title.textContent = options.titleText;
     header.appendChild(title);
-  } else {
-    if (options.onBack) {
-      header.appendChild(createBackButton(options.onBack));
-    } else {
-      header.appendChild(document.createElement('span'));
-    }
-
+  } else if (options.progressText || options.centerExtra) {
     const center = document.createElement('div');
     center.className = 'play-header-center';
 
@@ -57,7 +49,6 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
     }
 
     header.appendChild(center);
-    header.appendChild(createHeaderActions());
   }
 
   return header;
