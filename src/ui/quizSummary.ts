@@ -30,7 +30,7 @@ export function renderQuizSummary(
   const card = createCard();
 
   const title = document.createElement('h1');
-  title.className = 'title';
+  title.className = 'summary-title';
   title.textContent = strings.roundEnd;
   card.appendChild(title);
 

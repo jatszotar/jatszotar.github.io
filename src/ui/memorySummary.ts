@@ -21,7 +21,7 @@ export function renderMemorySummary(
   card.className = 'card';
 
   const title = document.createElement('h1');
-  title.className = 'title';
+  title.className = 'summary-title';
   title.textContent = strings.memoryWin;
   card.appendChild(title);
 

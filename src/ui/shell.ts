@@ -26,7 +26,7 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
 
   if (options.titleText) {
     const title = document.createElement('h1');
-    title.className = 'title play-progress';
+    title.className = 'screen-title';
     title.textContent = options.titleText;
     header.appendChild(title);
   } else {

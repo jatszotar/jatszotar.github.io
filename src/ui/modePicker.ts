@@ -16,7 +16,7 @@ function createGameCard(
   emoji.textContent = game.emoji;
 
   const title = document.createElement('span');
-  title.className = 'game-card-title';
+  title.className = 'card-title';
   title.textContent = game.title;
 
   const age = document.createElement('span');

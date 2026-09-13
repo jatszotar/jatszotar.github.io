@@ -3,8 +3,7 @@ import { MEMORY_SIZES } from '../memory/types';
 import type { GameProgress } from '../progress/store';
 import { formatDuration } from '../timer/format';
 import { loadTimerVisible } from '../timer/settings';
-import { createBackButton } from './backButton';
-import { createHeaderActions } from './headerActions';
+import { createPlayHeader, createSectionTitle } from './shell';
 import { strings } from './strings';
 
 export function renderMemoryHome(
@@ -18,23 +17,14 @@ export function renderMemoryHome(
   const card = document.createElement('div');
   card.className = 'card';
 
-  const header = document.createElement('div');
-  header.className = 'play-header';
+  card.appendChild(
+    createPlayHeader({
+      onBack,
+      titleText: strings.memoryTitle,
+    }),
+  );
 
-  header.appendChild(createBackButton(onBack));
-
-  const title = document.createElement('span');
-  title.className = 'play-progress';
-  title.textContent = strings.memoryTitle;
-  header.appendChild(title);
-
-  header.appendChild(createHeaderActions());
-  card.appendChild(header);
-
-  const sizeTitle = document.createElement('p');
-  sizeTitle.className = 'section-title';
-  sizeTitle.textContent = strings.memorySizes;
-  card.appendChild(sizeTitle);
+  card.appendChild(createSectionTitle(strings.memorySizes));
 
   const sizeGrid = document.createElement('div');
   sizeGrid.className = 'range-grid';
@@ -48,6 +38,7 @@ export function renderMemoryHome(
     }
 
     const label = document.createElement('div');
+    label.className = 'card-title';
     label.textContent = strings.memorySizeLabel(size.key);
     button.appendChild(label);
 

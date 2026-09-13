@@ -52,7 +52,7 @@ export function renderLevelHome<TLevel>(
         ? strings.bestTime(formatDuration(bestMs))
         : '';
     button.innerHTML = `
-      <div>${options.levelLabel(level, index)}</div>
+      <div class="card-title">${options.levelLabel(level, index)}</div>
       <small>${statusText}${bestText ? ` · ${bestText}` : ''}</small>
     `;
     if (unlocked) {
