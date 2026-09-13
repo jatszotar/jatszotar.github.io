@@ -158,4 +158,9 @@ export const strings = {
   themeLight: 'Világos mód',
   retryStart: 'Most még egyszer a hibás feladatok!',
   retryProgress: (current: number, total: number) => `Ismét: ${current} / ${total}`,
+  timerShow: 'Stopper be',
+  timerHide: 'Stopper ki',
+  elapsedTime: (text: string) => `Idő: ${text}`,
+  bestTime: (text: string) => `Legjobb: ${text}`,
+  newBestTime: 'Új rekord!',
 };

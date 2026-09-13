@@ -3,9 +3,17 @@ import type { RoundResult } from '../game/types';
 import { ROUND_SIZE, UNLOCK_THRESHOLD } from '../game/types';
 import {
   loadGameProgress,
+  recordBestTime,
   recordRoundResult,
   saveGameProgress,
 } from '../progress/store';
+import {
+  elapsedMs,
+  pauseStopwatch,
+  resumeStopwatch,
+  startStopwatch,
+  type StopwatchState,
+} from '../timer/stopwatch';
 import { renderLevelHome } from './levelHome';
 import { renderQuizSummary } from './quizSummary';
 import {
@@ -21,6 +29,7 @@ import {
 import { createCard, createPlayHeader } from './shell';
 import { createKeypad, attachKeypadKeyboard } from './keypad';
 import { createChoicePad } from './choicePad';
+import { createTimerDisplay, type TimerDisplay } from './timerDisplay';
 
 type QuizScreen = 'home' | 'play' | 'summary';
 
@@ -86,10 +95,24 @@ export function createQuizMount<TQuestion, TLevel>(
     let playState: RoundRunnerState<TQuestion> | null = null;
     let runnerConfig: RoundRunnerConfig<TQuestion> | null = null;
     let lastResult: RoundResult | null = null;
+    let stopwatch: StopwatchState | null = null;
+    let timerDisplay: TimerDisplay | null = null;
+    let lastElapsedMs: number | undefined;
+    let lastBestMs: number | undefined;
+    let lastIsNewBest = false;
     let cleanup: (() => void) | null = null;
+
+    const stopTimer = (): void => {
+      timerDisplay?.stop();
+      timerDisplay = null;
+      stopwatch = null;
+    };
 
     const startRound = (index: number): void => {
       levelIndex = index;
+      lastElapsedMs = undefined;
+      lastBestMs = undefined;
+      lastIsNewBest = false;
       const level = options.levels[index];
       const questions = options.generateRound(level, ROUND_SIZE);
       runnerConfig = {
@@ -99,6 +122,21 @@ export function createQuizMount<TQuestion, TLevel>(
         getCorrectAnswer: options.getCorrectAnswer,
       };
       playState = createRoundRunnerState(runnerConfig);
+      stopwatch = startStopwatch(Date.now());
+      timerDisplay = createTimerDisplay({
+        getElapsedMs: () =>
+          stopwatch ? elapsedMs(stopwatch, Date.now()) : 0,
+        pause: () => {
+          if (stopwatch) {
+            stopwatch = pauseStopwatch(stopwatch, Date.now());
+          }
+        },
+        resume: () => {
+          if (stopwatch) {
+            stopwatch = resumeStopwatch(stopwatch, Date.now());
+          }
+        },
+      });
       screen = 'play';
       render();
     };
@@ -130,12 +168,14 @@ export function createQuizMount<TQuestion, TLevel>(
 
         const header = createPlayHeader({
           onBack: () => {
+            stopTimer();
             screen = 'home';
             playState = null;
             runnerConfig = null;
             render();
           },
           progressText: progressLabel(state),
+          centerExtra: timerDisplay?.element,
         });
         card.appendChild(header);
 
@@ -154,8 +194,18 @@ export function createQuizMount<TQuestion, TLevel>(
         };
 
         const onComplete = (result: RoundResult) => {
-          progress = recordRoundResult(
+          const roundElapsedMs = stopwatch
+            ? elapsedMs(stopwatch, Date.now())
+            : 0;
+          stopTimer();
+
+          const bestTimeResult = recordBestTime(
             progress,
+            levelIndex,
+            roundElapsedMs,
+          );
+          progress = recordRoundResult(
+            bestTimeResult.progress,
             levelIndex,
             result,
             maxLevelIndex,
@@ -163,6 +213,9 @@ export function createQuizMount<TQuestion, TLevel>(
           );
           saveGameProgress(options.gameId, progress);
           lastResult = result;
+          lastElapsedMs = roundElapsedMs;
+          lastBestMs = progress.bestTimesMs?.[levelIndex];
+          lastIsNewBest = bestTimeResult.isNewBest;
           playState = null;
           runnerConfig = null;
           screen = 'summary';
@@ -269,11 +322,17 @@ export function createQuizMount<TQuestion, TLevel>(
           progress,
           levelLabel: (index) =>
             options.levelLabel(options.levels[index], index),
+          elapsedMs: lastElapsedMs,
+          bestMs: lastBestMs,
+          isNewBest: lastIsNewBest,
           onReplay: () => startRound(levelIndex),
           onNextLevel: () => startRound(levelIndex + 1),
           onHome: () => {
             screen = 'home';
             lastResult = null;
+            lastElapsedMs = undefined;
+            lastBestMs = undefined;
+            lastIsNewBest = false;
             render();
           },
         });

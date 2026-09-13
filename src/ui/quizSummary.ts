@@ -2,6 +2,7 @@ import type { RoundResult } from '../game/types';
 import type { GameProgress } from '../progress/store';
 import { nextLevelIndex } from '../progress/store';
 import { UNLOCK_THRESHOLD } from '../game/types';
+import { formatDuration } from '../timer/format';
 import { createCard } from './shell';
 import { strings } from './strings';
 
@@ -12,6 +13,9 @@ export interface QuizSummaryOptions {
   progress: GameProgress;
   levelLabel: (index: number) => string;
   unlockThreshold?: number;
+  elapsedMs?: number;
+  bestMs?: number;
+  isNewBest?: boolean;
   onReplay: () => void;
   onNextLevel: () => void;
   onHome: () => void;
@@ -34,6 +38,27 @@ export function renderQuizSummary(
   score.className = 'summary-score';
   score.textContent = strings.score(options.result.correct, options.result.total);
   card.appendChild(score);
+
+  if (options.elapsedMs !== undefined) {
+    const time = document.createElement('div');
+    time.className = 'summary-time';
+    time.textContent = strings.elapsedTime(formatDuration(options.elapsedMs));
+    card.appendChild(time);
+
+    if (options.bestMs !== undefined) {
+      const best = document.createElement('div');
+      best.className = 'summary-best-time';
+      best.textContent = strings.bestTime(formatDuration(options.bestMs));
+      card.appendChild(best);
+    }
+
+    if (options.isNewBest) {
+      const record = document.createElement('div');
+      record.className = 'summary-new-best';
+      record.textContent = strings.newBestTime;
+      card.appendChild(record);
+    }
+  }
 
   const threshold = options.unlockThreshold ?? UNLOCK_THRESHOLD;
   const nextIndex = nextLevelIndex(options.levelIndex, options.maxLevelIndex);

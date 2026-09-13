@@ -1,9 +1,11 @@
 import { getGame } from './games/registry';
 import { applyTheme, loadTheme } from './theme/settings';
+import { applyTimerVisible, loadTimerVisible } from './timer/settings';
 import { createAppHeader } from './ui/appHeader';
 import { renderModePicker } from './ui/modePicker';
 
 applyTheme(loadTheme());
+applyTimerVisible(loadTimerVisible());
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) {

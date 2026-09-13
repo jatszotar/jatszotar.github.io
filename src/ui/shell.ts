@@ -11,6 +11,7 @@ export interface PlayHeaderOptions {
   onBack?: () => void;
   progressText?: string;
   titleText?: string;
+  centerExtra?: HTMLElement;
 }
 
 export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
@@ -29,10 +30,21 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
     title.textContent = options.titleText;
     header.appendChild(title);
   } else {
-    const progress = document.createElement('span');
-    progress.className = 'play-progress';
-    progress.textContent = options.progressText ?? '';
-    header.appendChild(progress);
+    const center = document.createElement('div');
+    center.className = 'play-header-center';
+
+    if (options.progressText) {
+      const progress = document.createElement('span');
+      progress.className = 'play-progress';
+      progress.textContent = options.progressText;
+      center.appendChild(progress);
+    }
+
+    if (options.centerExtra) {
+      center.appendChild(options.centerExtra);
+    }
+
+    header.appendChild(center);
   }
 
   header.appendChild(createHeaderActions());

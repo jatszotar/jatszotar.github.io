@@ -9,6 +9,7 @@ const STORAGE_KEY_V2 = 'memmath-progress-v2';
 export interface GameProgress {
   unlockedLevelIndex: number;
   lastScores: Partial<Record<number, RoundResult>>;
+  bestTimesMs?: Partial<Record<number, number>>;
 }
 
 export interface AllProgress {
@@ -19,6 +20,7 @@ function defaultGameProgress(): GameProgress {
   return {
     unlockedLevelIndex: 0,
     lastScores: {},
+    bestTimesMs: {},
   };
 }
 
@@ -80,6 +82,7 @@ export function loadGameProgress(
       maxLevelIndex,
     ),
     lastScores: stored.lastScores ?? {},
+    bestTimesMs: stored.bestTimesMs ?? {},
   };
 }
 
@@ -109,6 +112,7 @@ export function recordRoundResult(
   const next: GameProgress = {
     unlockedLevelIndex: progress.unlockedLevelIndex,
     lastScores: { ...progress.lastScores, [levelIndex]: result },
+    bestTimesMs: progress.bestTimesMs,
   };
 
   if (
@@ -130,4 +134,34 @@ export function nextLevelIndex(
     return null;
   }
   return levelIndex + 1;
+}
+
+export function recordBestTime(
+  progress: GameProgress,
+  levelIndex: number,
+  elapsedMs: number,
+): { progress: GameProgress; isNewBest: boolean } {
+  const bestTimesMs = { ...progress.bestTimesMs };
+  const existing = bestTimesMs[levelIndex];
+
+  if (existing === undefined) {
+    bestTimesMs[levelIndex] = elapsedMs;
+    return {
+      progress: { ...progress, bestTimesMs },
+      isNewBest: false,
+    };
+  }
+
+  if (elapsedMs < existing) {
+    bestTimesMs[levelIndex] = elapsedMs;
+    return {
+      progress: { ...progress, bestTimesMs },
+      isNewBest: true,
+    };
+  }
+
+  return {
+    progress,
+    isNewBest: false,
+  };
 }

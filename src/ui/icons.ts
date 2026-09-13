@@ -104,3 +104,23 @@ export function createBackIcon(): SVGSVGElement {
   addStrokedPath(svg, 'M12 19l-7-7 7-7');
   return svg;
 }
+
+export function createClockIcon(): SVGSVGElement {
+  const svg = createIconSvg();
+  const face = document.createElementNS(SVG_NS, 'circle');
+  face.setAttribute('cx', '12');
+  face.setAttribute('cy', '12');
+  face.setAttribute('r', '8');
+  face.setAttribute('fill', 'none');
+  face.setAttribute('stroke', 'currentColor');
+  face.setAttribute('stroke-width', '2');
+  svg.appendChild(face);
+  addStrokedPath(svg, 'M12 7v5l3 2');
+  return svg;
+}
+
+export function createClockOffIcon(): SVGSVGElement {
+  const svg = createClockIcon();
+  addStrokedPath(svg, 'M5 5l14 14');
+  return svg;
+}
