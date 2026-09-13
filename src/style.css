@@ -468,6 +468,11 @@ body {
   font-weight: 800;
 }
 
+.mode-picker .play-header .title {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
 .game-card-age {
   font-size: 0.8rem;
   color: var(--muted);

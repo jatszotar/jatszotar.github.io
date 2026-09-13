@@ -37,6 +37,7 @@ export function renderModePicker(
   root.innerHTML = '';
 
   const card = createCard();
+  card.classList.add('mode-picker');
   card.appendChild(
     createPlayHeader({
       titleText: strings.chooseGame,
