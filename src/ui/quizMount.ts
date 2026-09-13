@@ -28,7 +28,7 @@ import {
 } from './roundRunner';
 import { createCard, createPlayHeader } from './shell';
 import { createKeypad, attachKeypadKeyboard } from './keypad';
-import { createChoicePad } from './choicePad';
+import { createChoicePad, type ChoiceVariant } from './choicePad';
 import { createTimerDisplay, type TimerDisplay } from './timerDisplay';
 
 type QuizScreen = 'home' | 'play' | 'summary';
@@ -73,6 +73,7 @@ export type QuizMountOptions<TQuestion, TLevel> = QuizMountOptionsBase<
     | {
         inputMode: 'choice';
         getChoices: (question: TQuestion) => string[];
+        choiceVariant?: (question: TQuestion) => ChoiceVariant;
         renderInput?: never;
       }
     | {
@@ -285,6 +286,7 @@ export function createQuizMount<TQuestion, TLevel>(
           const choicePad = createChoicePad({
             choices,
             disabled: state.awaitingAdvance,
+            variant: options.choiceVariant?.(question),
             onChoice: (choice) => {
               submitRoundChoice(state, config, choice, onComplete, onChange);
             },

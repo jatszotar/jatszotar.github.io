@@ -25,4 +25,6 @@ export const mountClock = createQuizMount({
   },
   inputMode: 'choice',
   getChoices: (question) => question.choices,
+  choiceVariant: (question) =>
+    question.answerMode === 'spoken' ? 'wide' : 'compact',
 });

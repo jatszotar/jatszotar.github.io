@@ -1,18 +1,24 @@
+export type ChoiceVariant = 'compact' | 'wide';
+
 export interface ChoicePadOptions {
   choices: string[];
   disabled?: boolean;
+  variant?: ChoiceVariant;
   onChoice: (choice: string) => void;
 }
 
 export function createChoicePad(options: ChoicePadOptions): HTMLDivElement {
   const pad = document.createElement('div');
-  pad.className = 'choice-pad';
+  const variant = options.variant ?? 'compact';
+  pad.className =
+    variant === 'wide' ? 'choice-pad choice-pad-wide' : 'choice-pad';
   const disabled = options.disabled ?? false;
 
   for (const choice of options.choices) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'btn choice-btn';
+    button.className =
+      variant === 'wide' ? 'btn choice-btn choice-btn-wide' : 'btn choice-btn';
     button.textContent = choice;
     button.disabled = disabled;
     button.addEventListener('click', () => {
