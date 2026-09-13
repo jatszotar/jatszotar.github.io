@@ -125,6 +125,49 @@ export function createClockOffIcon(): SVGSVGElement {
   return svg;
 }
 
+export function createBrandMarkIcon(): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 64 64');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  svg.classList.add('brand-mark');
+
+  const bg = document.createElementNS(SVG_NS, 'rect');
+  bg.setAttribute('x', '4');
+  bg.setAttribute('y', '4');
+  bg.setAttribute('width', '56');
+  bg.setAttribute('height', '56');
+  bg.setAttribute('rx', '14');
+  bg.setAttribute('fill', 'currentColor');
+  svg.appendChild(bg);
+
+  const tiles: Array<{ x: number; y: number; bright: boolean }> = [
+    { x: 12, y: 12, bright: false },
+    { x: 26, y: 12, bright: false },
+    { x: 40, y: 12, bright: true },
+    { x: 12, y: 26, bright: false },
+    { x: 26, y: 26, bright: false },
+    { x: 40, y: 26, bright: true },
+    { x: 12, y: 40, bright: true },
+    { x: 26, y: 40, bright: true },
+    { x: 40, y: 40, bright: false },
+  ];
+
+  for (const tile of tiles) {
+    const rect = document.createElementNS(SVG_NS, 'rect');
+    rect.setAttribute('x', String(tile.x));
+    rect.setAttribute('y', String(tile.y));
+    rect.setAttribute('width', '12');
+    rect.setAttribute('height', '12');
+    rect.setAttribute('rx', '3');
+    rect.setAttribute('fill', '#ffffff');
+    rect.setAttribute('opacity', tile.bright ? '1' : '0.55');
+    svg.appendChild(rect);
+  }
+
+  return svg;
+}
+
 export function createGitHubIcon(): SVGSVGElement {
   const svg = createIconSvg();
   addFilledPath(

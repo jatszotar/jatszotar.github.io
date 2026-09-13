@@ -133,6 +133,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+}
+
+.brand-mark {
+  width: clamp(1.4rem, 4vw, 1.8rem);
+  height: clamp(1.4rem, 4vw, 1.8rem);
+  flex: 0 0 auto;
+  color: var(--accent);
 }
 
 .app-brand {

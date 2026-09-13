@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Játszótár">
+  <style>
+    .bg { fill: #4f7cff; }
+    .tile-dim { fill: #ffffff; opacity: 0.55; }
+    .tile-bright { fill: #ffffff; opacity: 1; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #6f9bff; }
+    }
+  </style>
+  <rect class="bg" x="4" y="4" width="56" height="56" rx="14" />
+  <rect class="tile-dim" x="12" y="12" width="12" height="12" rx="3" />
+  <rect class="tile-dim" x="26" y="12" width="12" height="12" rx="3" />
+  <rect class="tile-bright" x="40" y="12" width="12" height="12" rx="3" />
+  <rect class="tile-dim" x="12" y="26" width="12" height="12" rx="3" />
+  <rect class="tile-dim" x="26" y="26" width="12" height="12" rx="3" />
+  <rect class="tile-bright" x="40" y="26" width="12" height="12" rx="3" />
+  <rect class="tile-bright" x="12" y="40" width="12" height="12" rx="3" />
+  <rect class="tile-bright" x="26" y="40" width="12" height="12" rx="3" />
+  <rect class="tile-dim" x="40" y="40" width="12" height="12" rx="3" />
+</svg>
