@@ -301,18 +301,31 @@ body {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-  padding: 0 0.4rem;
-  border: 3px solid var(--accent);
-  border-radius: 0.5rem;
+  min-width: 1.2em;
+  min-height: 1.2em;
+  padding: 0 0.15em;
+  border: 0.1em solid var(--accent);
+  border-radius: 0.15em;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  vertical-align: middle;
+}
+
+.blank-slot:empty::before {
+  content: '\2007';
 }
 
 .blank-slot-wide {
-  min-width: 3.25rem;
+  min-width: 1.5em;
+}
+
+.compare-display .blank-slot {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+}
+
+.sequence-display .blank-slot {
+  font-size: inherit;
 }
 
 .blank-slot.correct {
