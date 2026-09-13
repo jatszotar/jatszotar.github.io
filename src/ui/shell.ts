@@ -23,6 +23,11 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
 
   if (options.onBack) {
     toolbar.appendChild(createBackButton(options.onBack));
+  } else {
+    const backSpacer = document.createElement('span');
+    backSpacer.className = 'back-toggle-spacer';
+    backSpacer.setAttribute('aria-hidden', 'true');
+    toolbar.appendChild(backSpacer);
   }
 
   toolbar.appendChild(createHeaderActions());

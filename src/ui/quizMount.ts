@@ -168,6 +168,10 @@ export function createQuizMount<TQuestion, TLevel>(
         const state = playState;
         const config = runnerConfig;
         const card = createCard();
+        card.classList.add('card-play');
+
+        const play = document.createElement('div');
+        play.className = 'quiz-play';
 
         const header = createPlayHeader({
           onBack: () => {
@@ -180,16 +184,26 @@ export function createQuizMount<TQuestion, TLevel>(
           progressText: progressLabel(state),
           centerExtra: timerDisplay?.element,
         });
-        card.appendChild(header);
+        play.appendChild(header);
+
+        const body = document.createElement('div');
+        body.className = 'quiz-play-body';
 
         const question = getCurrentQuestion(state);
         const prompt = options.renderPrompt(question, state);
-        card.appendChild(prompt);
+
+        const promptArea = document.createElement('div');
+        promptArea.className = 'quiz-play-prompt';
+        promptArea.appendChild(prompt);
+        body.appendChild(promptArea);
 
         const feedback = document.createElement('div');
         feedback.className = `feedback ${state.feedbackType}`;
         feedback.textContent = state.feedback;
-        card.appendChild(feedback);
+        body.appendChild(feedback);
+
+        const inputArea = document.createElement('div');
+        inputArea.className = 'quiz-play-input';
 
         const onChange = (next: RoundRunnerState<TQuestion>) => {
           playState = next;
@@ -240,7 +254,7 @@ export function createQuizMount<TQuestion, TLevel>(
             answerBox.className = `answer-display ${state.feedbackType}`;
             answerBox.textContent =
               state.revealedAnswer ?? (state.input || '?');
-            card.appendChild(answerBox);
+            body.appendChild(answerBox);
           }
 
           const keypadHandlers = {
@@ -270,7 +284,7 @@ export function createQuizMount<TQuestion, TLevel>(
             },
           };
 
-          card.appendChild(createKeypad(keypadHandlers));
+          inputArea.appendChild(createKeypad(keypadHandlers));
 
           const controller = new AbortController();
           attachKeypadKeyboard(
@@ -295,7 +309,7 @@ export function createQuizMount<TQuestion, TLevel>(
               submitRoundChoice(state, config, choice, onComplete, onChange);
             },
           });
-          card.appendChild(choicePad);
+          inputArea.appendChild(choicePad);
         } else {
           const registerCleanup = (fn: () => void) => {
             const baseCleanup = cleanup;
@@ -306,7 +320,7 @@ export function createQuizMount<TQuestion, TLevel>(
           };
 
           options.renderInput({
-            card,
+            card: inputArea,
             question,
             state,
             disabled: state.awaitingAdvance,
@@ -316,6 +330,9 @@ export function createQuizMount<TQuestion, TLevel>(
           });
         }
 
+        play.appendChild(body);
+        play.appendChild(inputArea);
+        card.appendChild(play);
         root.appendChild(card);
         return;
       }
