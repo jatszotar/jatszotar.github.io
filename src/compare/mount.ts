@@ -52,6 +52,5 @@ export const mountCompare = createQuizMount({
   getCorrectAnswer: compareCorrectAnswer,
   renderPrompt: (question, state) => renderComparePrompt(question, state),
   inputMode: 'choice',
-  inlineAnswer: true,
   getChoices: () => ['<', '=', '>'],
 });

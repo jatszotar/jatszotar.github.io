@@ -3,34 +3,12 @@ import { ROUND_SIZE } from '../game/types';
 import { playCorrect, playWrong } from '../audio/sounds';
 import { strings } from './strings';
 
-export type RoundPhase = 'main' | 'retry';
+type RoundPhase = 'main' | 'retry';
 
 const CORRECT_PAUSE_MS = 700;
 const WRONG_REVEAL_MS = 2200;
 
-export interface RoundScheduler {
-  schedule(callback: () => void, delayMs: number): () => void;
-}
-
-export function createDefaultScheduler(): RoundScheduler {
-  return {
-    schedule(callback, delayMs) {
-      const id = globalThis.setTimeout(callback, delayMs);
-      return () => globalThis.clearTimeout(id);
-    },
-  };
-}
-
-let activeScheduler: RoundScheduler = createDefaultScheduler();
 const pendingCancels: Array<() => void> = [];
-
-export function setRoundScheduler(scheduler: RoundScheduler): () => void {
-  const previous = activeScheduler;
-  activeScheduler = scheduler;
-  return () => {
-    activeScheduler = previous;
-  };
-}
 
 export function cancelPendingRoundSteps(): void {
   for (const cancel of pendingCancels) {
@@ -40,8 +18,8 @@ export function cancelPendingRoundSteps(): void {
 }
 
 function scheduleStep(callback: () => void, delayMs: number): void {
-  const cancel = activeScheduler.schedule(callback, delayMs);
-  pendingCancels.push(cancel);
+  const id = globalThis.setTimeout(callback, delayMs);
+  pendingCancels.push(() => globalThis.clearTimeout(id));
 }
 
 export interface RoundRunnerState<T> {
@@ -63,7 +41,6 @@ export interface RoundRunnerState<T> {
 
 export interface RoundRunnerConfig<T> {
   questions: T[];
-  roundSize?: number;
   questionKey: (question: T) => string;
   checkAnswer: (question: T, input: string) => boolean;
   getCorrectAnswer: (question: T) => string;
@@ -72,8 +49,8 @@ export interface RoundRunnerConfig<T> {
 export function createRoundRunnerState<T>(
   config: RoundRunnerConfig<T>,
 ): RoundRunnerState<T> {
-  const roundSize = config.roundSize ?? ROUND_SIZE;
-  const questions = config.questions.slice(0, roundSize);
+  const questions = config.questions.slice(0, ROUND_SIZE);
+  const roundSize = questions.length;
   return {
     questions,
     currentIndex: 0,

@@ -67,25 +67,6 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
     title.className = 'screen-title';
     title.textContent = options.titleText;
     header.appendChild(title);
-  } else if (
-    layout === 'stacked' &&
-    (options.progressText || options.centerExtra)
-  ) {
-    const center = document.createElement('div');
-    center.className = 'play-header-center';
-
-    if (options.progressText) {
-      const progress = document.createElement('span');
-      progress.className = 'play-progress';
-      progress.textContent = options.progressText;
-      center.appendChild(progress);
-    }
-
-    if (options.centerExtra) {
-      center.appendChild(options.centerExtra);
-    }
-
-    header.appendChild(center);
   }
 
   return header;

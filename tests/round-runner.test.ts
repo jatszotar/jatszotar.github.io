@@ -25,7 +25,6 @@ describe('round runner', () => {
       { id: 'b', answer: '2' },
       { id: 'c', answer: '3' },
     ] as SimpleQ[],
-    roundSize: 3,
     questionKey: (q: SimpleQ) => q.id,
     checkAnswer: (q: SimpleQ, input: string) => input === q.answer,
     getCorrectAnswer: (q: SimpleQ) => q.answer,
@@ -127,7 +126,6 @@ describe('round runner', () => {
         { id: 'a', answer: '1' },
         { id: 'b', answer: '2' },
       ],
-      roundSize: 2,
     });
 
     const onChange = (next: typeof state) => {

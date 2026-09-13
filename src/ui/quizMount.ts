@@ -35,7 +35,7 @@ import { createTimerDisplay, type TimerDisplay } from './timerDisplay';
 
 type QuizScreen = 'home' | 'play' | 'summary';
 
-export interface QuizInputContext<TQuestion> {
+interface QuizInputContext<TQuestion> {
   card: HTMLDivElement;
   question: TQuestion;
   state: RoundRunnerState<TQuestion>;
