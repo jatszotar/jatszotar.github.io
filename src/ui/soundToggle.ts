@@ -11,7 +11,7 @@ export function createSoundToggle(onChange?: () => void): HTMLButtonElement {
   button.className = 'btn icon-toggle sound-toggle';
 
   const update = () => {
-    const label = enabled ? strings.soundOn : strings.soundOff;
+    const label = enabled ? strings.soundHide : strings.soundShow;
     button.replaceChildren(
       enabled ? createSoundOnIcon() : createSoundOffIcon(),
     );
