@@ -7,16 +7,23 @@ export function createCard(): HTMLDivElement {
   return card;
 }
 
+export type PlayHeaderLayout = 'stacked' | 'inline';
+
 export interface PlayHeaderOptions {
   onBack?: () => void;
   progressText?: string;
   titleText?: string;
   centerExtra?: HTMLElement;
+  layout?: PlayHeaderLayout;
 }
 
 export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
+  const layout = options.layout ?? 'stacked';
   const header = document.createElement('div');
-  header.className = 'play-header play-header-stacked';
+  header.className =
+    layout === 'inline'
+      ? 'play-header play-header-inline'
+      : 'play-header play-header-stacked';
 
   const toolbar = document.createElement('div');
   toolbar.className = 'play-header-toolbar';
@@ -30,6 +37,28 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
     toolbar.appendChild(backSpacer);
   }
 
+  if (
+    layout === 'inline' &&
+    (options.progressText || options.centerExtra) &&
+    !options.titleText
+  ) {
+    const inlineCenter = document.createElement('div');
+    inlineCenter.className = 'play-header-inline-center';
+
+    if (options.progressText) {
+      const progress = document.createElement('span');
+      progress.className = 'play-progress';
+      progress.textContent = options.progressText;
+      inlineCenter.appendChild(progress);
+    }
+
+    if (options.centerExtra) {
+      inlineCenter.appendChild(options.centerExtra);
+    }
+
+    toolbar.appendChild(inlineCenter);
+  }
+
   toolbar.appendChild(createHeaderActions());
   header.appendChild(toolbar);
 
@@ -38,7 +67,10 @@ export function createPlayHeader(options: PlayHeaderOptions): HTMLDivElement {
     title.className = 'screen-title';
     title.textContent = options.titleText;
     header.appendChild(title);
-  } else if (options.progressText || options.centerExtra) {
+  } else if (
+    layout === 'stacked' &&
+    (options.progressText || options.centerExtra)
+  ) {
     const center = document.createElement('div');
     center.className = 'play-header-center';
 

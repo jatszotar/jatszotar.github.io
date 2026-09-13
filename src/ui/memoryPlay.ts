@@ -90,6 +90,7 @@ export function renderMemoryPlay(
     onBack: onExit,
     progressText: strings.pairsFound(game.matchedPairs, game.totalPairs),
     centerExtra: timerElement,
+    layout: 'inline',
   });
   const status = header.querySelector<HTMLElement>('.play-progress');
   if (!status) {

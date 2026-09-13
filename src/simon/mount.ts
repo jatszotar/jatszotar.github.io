@@ -124,6 +124,7 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
             game.playerIndex,
             game.sequence.length,
           ),
+          layout: 'inline',
         }),
       );
 

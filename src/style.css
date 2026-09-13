@@ -182,6 +182,8 @@ body {
 
 .quiz-play-input {
   flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-play .equation {
@@ -208,28 +210,83 @@ body {
   margin-top: 0;
 }
 
-.card-play .count-field {
-  margin: 0.25rem 0;
+.card-play .quiz-play-input .answer-display {
+  min-height: 2.5rem;
+  font-size: 2.25rem;
+  margin: 0 0 0.35rem;
+  flex-shrink: 0;
 }
 
-.card-play .count-hint {
+.card-play .play-header {
+  margin-bottom: 0.5rem;
+}
+
+.card-play.counting-play .quiz-play-body {
+  overflow: hidden;
+}
+
+.card-play.counting-play .quiz-play-prompt {
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: center;
+  width: 100%;
+}
+
+.card-play.counting-play .count-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.card-play.counting-play .count-hint {
+  flex: 0 0 auto;
   margin-bottom: 0.35rem;
   font-size: 0.85rem;
 }
 
-.card-play .count-grid {
+.card-play.counting-play .count-groups,
+.card-play.counting-play .count-grid {
+  flex: 1 1 auto;
   min-height: 0;
-  max-height: 7rem;
+  width: 100%;
+  max-width: 22rem;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.card-play.counting-play .count-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 0.2rem 0;
+  box-sizing: border-box;
+}
+
+.card-play.counting-play .count-group {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.card-play.counting-play .count-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.35rem;
+  align-content: center;
 }
 
-.card-play .count-grid-fives {
-  max-width: 100%;
-  max-height: 6.5rem;
-}
-
-.card-play .count-emoji {
-  font-size: clamp(0.85rem, 3.2vw, 1.45rem);
+.card-play.counting-play .count-emoji {
+  font-size: var(--count-emoji-size, clamp(1.25rem, 5vw, 2.25rem));
+  line-height: 1.3;
+  display: inline-block;
+  padding: 0.12em 0;
+  text-align: center;
+  overflow: visible;
 }
 
 .screen-title {
@@ -361,10 +418,56 @@ body {
   font-weight: 700;
 }
 
-.play-header-stacked {
+.play-header-stacked,
+.play-header-inline {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.play-header-inline .play-header-toolbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  justify-content: stretch;
+}
+
+.play-header-inline-center {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: center;
+  pointer-events: none;
+  text-align: center;
+  z-index: 0;
+}
+
+.play-header-inline-center > * {
+  pointer-events: auto;
+}
+
+.play-header-inline-center .play-progress,
+.play-header-inline-center .play-timer {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.play-header-inline .play-header-toolbar .back-toggle,
+.play-header-inline .play-header-toolbar .back-toggle-spacer {
+  grid-column: 1;
+  grid-row: 1;
+  margin-right: 0;
+  z-index: 1;
+}
+
+.play-header-inline .play-header-toolbar .header-actions {
+  grid-column: 3;
+  grid-row: 1;
+  z-index: 1;
 }
 
 .play-header-center {
@@ -547,15 +650,15 @@ body {
 
 .keypad {
   display: grid;
-  grid-template-columns: repeat(3, minmax(4.5rem, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(3, minmax(3.5rem, 1fr));
+  gap: 0.5rem;
   max-width: 22rem;
   margin: 0 auto;
 }
 
 .key {
-  min-height: 4.5rem;
-  font-size: 1.5rem;
+  min-height: 3rem;
+  font-size: 1.25rem;
   font-weight: 800;
 }
 
@@ -731,6 +834,11 @@ body {
     padding: 1rem;
   }
 
+  .card-play.counting-play .count-groups,
+  .card-play.counting-play .count-grid {
+    max-width: 100%;
+  }
+
   .mode-picker .game-groups {
     gap: 0.75rem;
   }
@@ -841,7 +949,9 @@ body {
 
 .count-emoji {
   font-size: clamp(1.5rem, 6vw, 2.5rem);
-  line-height: 1;
+  line-height: 1.2;
+  display: inline-block;
+  padding: 0.1em 0;
 }
 
 .compare-display {

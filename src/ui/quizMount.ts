@@ -61,6 +61,11 @@ type QuizMountOptionsBase<TQuestion, TLevel> = {
   maxInputDigits?: number;
   inlineAnswer?: boolean;
   extraHomeContent?: (card: HTMLDivElement) => void;
+  playClass?: string;
+  onPlayPrompt?: (
+    promptEl: HTMLElement,
+    registerCleanup: (fn: () => void) => void,
+  ) => void;
 };
 
 export type QuizMountOptions<TQuestion, TLevel> = QuizMountOptionsBase<
@@ -170,6 +175,9 @@ export function createQuizMount<TQuestion, TLevel>(
         const config = runnerConfig;
         const card = createCard();
         card.classList.add('card-play');
+        if (options.playClass) {
+          card.classList.add(options.playClass);
+        }
 
         const play = document.createElement('div');
         play.className = 'quiz-play';
@@ -184,6 +192,7 @@ export function createQuizMount<TQuestion, TLevel>(
           },
           progressText: progressLabel(state),
           centerExtra: timerDisplay?.element,
+          layout: 'inline',
         });
         play.appendChild(header);
 
@@ -197,6 +206,17 @@ export function createQuizMount<TQuestion, TLevel>(
         promptArea.className = 'quiz-play-prompt';
         promptArea.appendChild(prompt);
         body.appendChild(promptArea);
+
+        if (options.onPlayPrompt) {
+          const registerPromptCleanup = (fn: () => void) => {
+            const baseCleanup = cleanup;
+            cleanup = () => {
+              baseCleanup?.();
+              fn();
+            };
+          };
+          options.onPlayPrompt(prompt, registerPromptCleanup);
+        }
 
         const feedback = document.createElement('div');
         feedback.className = `feedback ${state.feedbackType}`;
@@ -254,7 +274,7 @@ export function createQuizMount<TQuestion, TLevel>(
             const answerBox = document.createElement('div');
             answerBox.className = `answer-display ${state.feedbackType}`;
             answerBox.textContent = answerDisplayValueFromState(state);
-            body.appendChild(answerBox);
+            inputArea.appendChild(answerBox);
           }
 
           const keypadHandlers = {
@@ -286,7 +306,9 @@ export function createQuizMount<TQuestion, TLevel>(
             },
           };
 
-          inputArea.appendChild(createKeypad(keypadHandlers));
+          inputArea.appendChild(
+            createKeypad(keypadHandlers),
+          );
 
           const controller = new AbortController();
           attachKeypadKeyboard(
