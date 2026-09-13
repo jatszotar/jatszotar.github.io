@@ -22,7 +22,8 @@
   --tricky-bg: #faf5ff;
   --tile-back: linear-gradient(145deg, #edf2ff, #dbeafe);
   --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
-  /* Brand line plus the shell gap, so the card can stay inside the viewport. */
+  /* Toolbar, brand, shell gap, and footer — card height fits the viewport. */
+  --app-toolbar-h: 2.6rem;
   --app-header-h: 3.25rem;
   --app-footer-h: 1.75rem;
   --app-shell-gap: 1rem;
@@ -32,13 +33,13 @@
   --app-card-h: min(
     calc(40rem + 5px),
     calc(
-      var(--app-viewport-h) - var(--app-viewport-pad) - var(--app-header-h) -
-        var(--app-footer-h) - (2 * var(--app-shell-gap))
+      var(--app-viewport-h) - var(--app-viewport-pad) - var(--app-toolbar-h) -
+        var(--app-header-h) - var(--app-footer-h) - (2 * var(--app-shell-gap))
     )
   );
   --app-shell-h: calc(
-    var(--app-header-h) + var(--app-footer-h) + (2 * var(--app-shell-gap)) +
-      var(--app-card-h)
+    var(--app-toolbar-h) + var(--app-header-h) + var(--app-footer-h) +
+      (2 * var(--app-shell-gap)) + var(--app-card-h)
   );
 }
 
@@ -98,6 +99,34 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--app-toolbar-h);
+  flex: 0 0 var(--app-toolbar-h);
+  gap: 0.5rem;
+}
+
+.app-toolbar-back {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.app-toolbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.app-toolbar-actions .header-actions {
+  flex-wrap: nowrap;
 }
 
 .app-header {
@@ -415,56 +444,29 @@ body {
   font-weight: 700;
 }
 
-.play-header-stacked,
-.play-header-inline {
+.play-header-stacked {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.play-header-inline .play-header-toolbar {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  justify-content: stretch;
+.play-header-status {
+  margin-bottom: 0.5rem;
 }
 
-.play-header-inline-center {
-  grid-column: 1 / -1;
-  grid-row: 1;
+.play-header-status-row {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  justify-self: center;
-  pointer-events: none;
-  text-align: center;
-  z-index: 0;
+  white-space: nowrap;
 }
 
-.play-header-inline-center > * {
-  pointer-events: auto;
-}
-
-.play-header-inline-center .play-progress,
-.play-header-inline-center .play-timer {
+.play-header-status-row .play-progress,
+.play-header-status-row .play-timer {
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
-}
-
-.play-header-inline .play-header-toolbar .back-toggle,
-.play-header-inline .play-header-toolbar .back-toggle-spacer {
-  grid-column: 1;
-  grid-row: 1;
-  margin-right: 0;
-  z-index: 1;
-}
-
-.play-header-inline .play-header-toolbar .header-actions {
-  grid-column: 3;
-  grid-row: 1;
-  z-index: 1;
 }
 
 .play-progress {
@@ -481,32 +483,6 @@ body {
   display: none;
 }
 
-.play-header-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  width: 100%;
-  height: 2.6rem;
-  flex: 0 0 2.6rem;
-}
-
-.play-header-toolbar .back-toggle,
-.back-toggle-spacer {
-  margin-right: auto;
-}
-
-.back-toggle-spacer {
-  flex: 0 0 2.6rem;
-  width: 2.6rem;
-  height: 2.6rem;
-}
-
-.play-header-toolbar .header-actions {
-  flex-wrap: nowrap;
-  justify-content: flex-end;
-}
-
 .play-header-stacked .screen-title {
   width: 100%;
 }
@@ -521,19 +497,13 @@ body {
 }
 
 @media (max-width: 24rem) {
-  .play-header-toolbar {
-    height: 2.35rem;
-    flex-basis: 2.35rem;
+  :root {
+    --app-toolbar-h: 2.35rem;
   }
 
-  .play-header-toolbar .icon-toggle,
-  .back-toggle-spacer {
+  .app-toolbar .icon-toggle {
     width: 2.35rem;
     height: 2.35rem;
-  }
-
-  .back-toggle-spacer {
-    flex-basis: 2.35rem;
   }
 }
 

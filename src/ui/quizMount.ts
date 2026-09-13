@@ -27,6 +27,7 @@ import {
   type RoundRunnerConfig,
   type RoundRunnerState,
 } from './roundRunner';
+import { setAppToolbarBack } from './appToolbar';
 import { createCard, createPlayHeader } from './shell';
 import { answerDisplayValueFromState } from './equationDisplay';
 import { createKeypad, attachKeypadKeyboard } from './keypad';
@@ -182,17 +183,17 @@ export function createQuizMount<TQuestion, TLevel>(
         const play = document.createElement('div');
         play.className = 'quiz-play';
 
+        setAppToolbarBack(() => {
+          stopTimer();
+          screen = 'home';
+          playState = null;
+          runnerConfig = null;
+          render();
+        });
+
         const header = createPlayHeader({
-          onBack: () => {
-            stopTimer();
-            screen = 'home';
-            playState = null;
-            runnerConfig = null;
-            render();
-          },
           progressText: progressLabel(state),
           centerExtra: timerDisplay?.element,
-          layout: 'inline',
         });
         play.appendChild(header);
 
@@ -365,6 +366,15 @@ export function createQuizMount<TQuestion, TLevel>(
 
       if (screen === 'summary' && lastResult) {
         const timerVisible = loadTimerVisible();
+        const goHome = () => {
+          screen = 'home';
+          lastResult = null;
+          lastElapsedMs = undefined;
+          lastBestMs = undefined;
+          lastIsNewBest = false;
+          render();
+        };
+        setAppToolbarBack(goHome);
         const summaryCleanup = renderQuizSummary(root, {
           levelIndex,
           maxLevelIndex,
@@ -377,14 +387,7 @@ export function createQuizMount<TQuestion, TLevel>(
           isNewBest: timerVisible ? lastIsNewBest : false,
           onReplay: () => startRound(levelIndex),
           onNextLevel: () => startRound(levelIndex + 1),
-          onHome: () => {
-            screen = 'home';
-            lastResult = null;
-            lastElapsedMs = undefined;
-            lastBestMs = undefined;
-            lastIsNewBest = false;
-            render();
-          },
+          onHome: goHome,
         });
         const baseCleanup = cleanup;
         cleanup = () => {

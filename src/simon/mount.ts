@@ -4,6 +4,7 @@ import {
   recordRoundResult,
   saveGameProgress,
 } from '../progress/store';
+import { setAppToolbarBack } from '../ui/appToolbar';
 import { createCard, createPlayHeader } from '../ui/shell';
 import { renderQuizSummary } from '../ui/quizSummary';
 import { renderLevelHome } from '../ui/levelHome';
@@ -112,19 +113,19 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
     }
 
     if (screen === 'play' && game) {
+      setAppToolbarBack(() => {
+        screen = 'home';
+        game = null;
+        render();
+      });
+
       const card = createCard();
       card.appendChild(
         createPlayHeader({
-          onBack: () => {
-            screen = 'home';
-            game = null;
-            render();
-          },
           progressText: strings.simonProgress(
             game.playerIndex,
             game.sequence.length,
           ),
-          layout: 'inline',
         }),
       );
 
@@ -225,6 +226,12 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
     }
 
     if (screen === 'summary' && lastResult) {
+      const goHome = () => {
+        screen = 'home';
+        lastResult = null;
+        render();
+      };
+      setAppToolbarBack(goHome);
       summaryCleanup = renderQuizSummary(root, {
         levelIndex,
         maxLevelIndex,
@@ -243,11 +250,7 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
           screen = 'play';
           render();
         },
-        onHome: () => {
-          screen = 'home';
-          lastResult = null;
-          render();
-        },
+        onHome: goHome,
       });
     }
   };

@@ -1,4 +1,5 @@
 import { GAME_CATEGORIES, getGame, type GameId } from '../games/registry';
+import { setAppToolbarBack } from './appToolbar';
 import { createCard, createPlayHeader } from './shell';
 import { strings } from './strings';
 
@@ -35,6 +36,7 @@ export function renderModePicker(
   onSelect: (gameId: GameId) => void,
 ): void {
   root.innerHTML = '';
+  setAppToolbarBack(null);
 
   const card = createCard();
   card.classList.add('mode-picker');

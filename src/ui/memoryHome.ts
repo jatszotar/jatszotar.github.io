@@ -3,6 +3,7 @@ import { MEMORY_SIZES } from '../memory/types';
 import type { GameProgress } from '../progress/store';
 import { formatDuration } from '../timer/format';
 import { loadTimerVisible } from '../timer/settings';
+import { setAppToolbarBack } from './appToolbar';
 import { createPlayHeader, createSectionTitle } from './shell';
 import { strings } from './strings';
 
@@ -13,16 +14,12 @@ export function renderMemoryHome(
   onBack: () => void,
 ): void {
   root.innerHTML = '';
+  setAppToolbarBack(onBack);
 
   const card = document.createElement('div');
   card.className = 'card';
 
-  card.appendChild(
-    createPlayHeader({
-      onBack,
-      titleText: strings.memoryTitle,
-    }),
-  );
+  card.appendChild(createPlayHeader({ titleText: strings.memoryTitle }));
 
   card.appendChild(createSectionTitle(strings.memorySizes));
 

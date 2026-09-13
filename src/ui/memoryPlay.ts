@@ -7,6 +7,7 @@ import {
 } from '../memory/game';
 import type { MemoryGame, MemorySizeKey, MemoryWinResult } from '../memory/types';
 import { getMemorySize, getSymbolById } from '../memory/types';
+import { setAppToolbarBack } from './appToolbar';
 import { createPlayHeader } from './shell';
 import { strings } from './strings';
 
@@ -66,6 +67,7 @@ export function renderMemoryPlay(
 ): void {
   playCleanup?.();
   root.innerHTML = '';
+  setAppToolbarBack(onExit);
 
   const timeouts: number[] = [];
   playCleanup = () => {
@@ -87,10 +89,8 @@ export function renderMemoryPlay(
   card.className = 'card';
 
   const header = createPlayHeader({
-    onBack: onExit,
     progressText: strings.pairsFound(game.matchedPairs, game.totalPairs),
     centerExtra: timerElement,
-    layout: 'inline',
   });
   const status = header.querySelector<HTMLElement>('.play-progress');
   if (!status) {

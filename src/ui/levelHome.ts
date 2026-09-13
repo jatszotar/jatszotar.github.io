@@ -2,6 +2,7 @@ import type { GameProgress } from '../progress/store';
 import { isLevelUnlocked } from '../progress/store';
 import { formatDuration } from '../timer/format';
 import { loadTimerVisible } from '../timer/settings';
+import { setAppToolbarBack } from './appToolbar';
 import { createCard, createPlayHeader, createSectionTitle } from './shell';
 import { strings } from './strings';
 
@@ -20,14 +21,10 @@ export function renderLevelHome<TLevel>(
   options: LevelHomeOptions<TLevel>,
 ): void {
   root.innerHTML = '';
+  setAppToolbarBack(options.onBack);
 
   const card = createCard();
-  card.appendChild(
-    createPlayHeader({
-      onBack: options.onBack,
-      titleText: options.title,
-    }),
-  );
+  card.appendChild(createPlayHeader({ titleText: options.title }));
 
   options.extraContent?.(card);
 

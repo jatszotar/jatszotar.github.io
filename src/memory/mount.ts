@@ -11,6 +11,7 @@ import {
   startStopwatch,
   type StopwatchState,
 } from '../timer/stopwatch';
+import { setAppToolbarBack } from '../ui/appToolbar';
 import { renderMemoryHome } from '../ui/memoryHome';
 import {
   createMemoryPlaySession,
@@ -129,6 +130,12 @@ export function mountMemory(root: HTMLElement, onExit: () => void): void {
 
     if (screen === 'summary' && memorySize && memoryResult) {
       const timerVisible = loadTimerVisible();
+      const goHome = () => {
+        screen = 'home';
+        memoryResult = null;
+        render();
+      };
+      setAppToolbarBack(goHome);
       summaryCleanup = renderMemorySummary(
         root,
         memoryResult,
@@ -141,11 +148,7 @@ export function mountMemory(root: HTMLElement, onExit: () => void): void {
           screen = 'play';
           render();
         },
-        () => {
-          screen = 'home';
-          memoryResult = null;
-          render();
-        },
+        goHome,
       );
     }
   };
