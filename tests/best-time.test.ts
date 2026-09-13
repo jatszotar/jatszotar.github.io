@@ -5,11 +5,11 @@ import {
 } from '../src/progress/store';
 
 describe('recordBestTime', () => {
-  it('stores the first run without marking it as a new best', () => {
+  it('marks the first run as a new best', () => {
     const progress = { unlockedLevelIndex: 0, lastScores: {} };
     const result = recordBestTime(progress, 0, 42_000);
 
-    expect(result.isNewBest).toBe(false);
+    expect(result.isNewBest).toBe(true);
     expect(result.progress.bestTimesMs?.[0]).toBe(42_000);
   });
 

@@ -148,7 +148,7 @@ export function recordBestTime(
     bestTimesMs[levelIndex] = elapsedMs;
     return {
       progress: { ...progress, bestTimesMs },
-      isNewBest: false,
+      isNewBest: true,
     };
   }
 
