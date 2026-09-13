@@ -1,5 +1,6 @@
 import type { MemoryWinResult } from '../memory/types';
 import { formatDuration } from '../timer/format';
+import { attachSummaryKeyboard } from './summaryKeyboard';
 import { strings } from './strings';
 
 export interface MemorySummaryTimerOptions {
@@ -14,7 +15,7 @@ export function renderMemorySummary(
   timer: MemorySummaryTimerOptions,
   onReplay: () => void,
   onHome: () => void,
-): void {
+): () => void {
   root.innerHTML = '';
 
   const card = document.createElement('div');
@@ -75,4 +76,11 @@ export function renderMemorySummary(
 
   card.appendChild(actions);
   root.appendChild(card);
+
+  const controller = new AbortController();
+  attachSummaryKeyboard(onReplay, controller.signal);
+
+  return () => {
+    controller.abort();
+  };
 }

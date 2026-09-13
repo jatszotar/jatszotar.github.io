@@ -39,6 +39,7 @@ export function mountMemory(root: HTMLElement, onExit: () => void): void {
   let lastElapsedMs: number | undefined;
   let lastBestMs: number | undefined;
   let lastIsNewBest = false;
+  let summaryCleanup: (() => void) | null = null;
 
   const stopTimer = (): void => {
     timerDisplay?.stop();
@@ -67,6 +68,8 @@ export function mountMemory(root: HTMLElement, onExit: () => void): void {
 
   const render = (): void => {
     destroyMemoryPlay();
+    summaryCleanup?.();
+    summaryCleanup = null;
     root.innerHTML = '';
 
     if (screen === 'home') {
@@ -126,7 +129,7 @@ export function mountMemory(root: HTMLElement, onExit: () => void): void {
 
     if (screen === 'summary' && memorySize && memoryResult) {
       const timerVisible = loadTimerVisible();
-      renderMemorySummary(
+      summaryCleanup = renderMemorySummary(
         root,
         memoryResult,
         {

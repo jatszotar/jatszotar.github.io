@@ -4,6 +4,7 @@ import { nextLevelIndex } from '../progress/store';
 import { UNLOCK_THRESHOLD } from '../game/types';
 import { formatDuration } from '../timer/format';
 import { createCard } from './shell';
+import { attachSummaryKeyboard } from './summaryKeyboard';
 import { strings } from './strings';
 
 export interface QuizSummaryOptions {
@@ -24,7 +25,7 @@ export interface QuizSummaryOptions {
 export function renderQuizSummary(
   root: HTMLElement,
   options: QuizSummaryOptions,
-): void {
+): () => void {
   root.innerHTML = '';
 
   const card = createCard();
@@ -103,4 +104,20 @@ export function renderQuizSummary(
 
   card.appendChild(actions);
   root.appendChild(card);
+
+  const controller = new AbortController();
+  attachSummaryKeyboard(
+    () => {
+      if (unlocked) {
+        options.onNextLevel();
+      } else {
+        options.onReplay();
+      }
+    },
+    controller.signal,
+  );
+
+  return () => {
+    controller.abort();
+  };
 }

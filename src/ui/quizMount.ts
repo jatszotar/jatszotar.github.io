@@ -343,7 +343,7 @@ export function createQuizMount<TQuestion, TLevel>(
 
       if (screen === 'summary' && lastResult) {
         const timerVisible = loadTimerVisible();
-        renderQuizSummary(root, {
+        const summaryCleanup = renderQuizSummary(root, {
           levelIndex,
           maxLevelIndex,
           result: lastResult,
@@ -364,6 +364,11 @@ export function createQuizMount<TQuestion, TLevel>(
             render();
           },
         });
+        const baseCleanup = cleanup;
+        cleanup = () => {
+          baseCleanup();
+          summaryCleanup();
+        };
       }
     };
 

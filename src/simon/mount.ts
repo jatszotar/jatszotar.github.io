@@ -26,6 +26,7 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
   let levelIndex = 0;
   let game: SimonGame | null = null;
   let lastResult: { correct: number; total: number } | null = null;
+  let summaryCleanup: (() => void) | null = null;
   let timeouts: number[] = [];
 
   const clearTimeouts = (): void => {
@@ -89,6 +90,8 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
 
   const render = (): void => {
     clearTimeouts();
+    summaryCleanup?.();
+    summaryCleanup = null;
     root.innerHTML = '';
 
     if (screen === 'home') {
@@ -221,7 +224,7 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
     }
 
     if (screen === 'summary' && lastResult) {
-      renderQuizSummary(root, {
+      summaryCleanup = renderQuizSummary(root, {
         levelIndex,
         maxLevelIndex,
         result: lastResult,
