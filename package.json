@@ -1,0 +1,23 @@
+{
+  "name": "jatszotar",
+  "private": true,
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "author": "Laszlo Gecse",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.3",
+    "vitest": "^2.1.8"
+  }
+}
