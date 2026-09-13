@@ -4,6 +4,7 @@ import {
   generateCountingQuestion,
   generateCountingRound,
 } from '../src/counting/generate';
+import { createSeededRng } from '../src/game/random';
 import { COUNTING_LEVELS } from '../src/counting/types';
 
 describe('counting generate', () => {
@@ -18,6 +19,22 @@ describe('counting generate', () => {
     expect(q.filterVariant).toBeDefined();
     const filtered = q.items.filter((i) => i.variant === q.filterVariant);
     expect(filtered.length).toBe(q.answer);
+  });
+
+  it('gives the two colour groups visibly different emoji', () => {
+    const rng = createSeededRng(7);
+    for (let i = 0; i < 200; i += 1) {
+      const q = generateCountingQuestion(COUNTING_LEVELS[3], rng);
+      const red = new Set(
+        q.items.filter((item) => item.variant === 'red').map((i) => i.emoji),
+      );
+      const blue = new Set(
+        q.items.filter((item) => item.variant === 'blue').map((i) => i.emoji),
+      );
+      expect(red.size).toBe(1);
+      expect(blue.size).toBe(1);
+      expect([...red][0]).not.toBe([...blue][0]);
+    }
   });
 
   it('generates a round', () => {

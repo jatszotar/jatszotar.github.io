@@ -518,14 +518,6 @@ body {
   line-height: 1;
 }
 
-.count-red {
-  filter: hue-rotate(-30deg) saturate(1.5);
-}
-
-.count-blue {
-  filter: hue-rotate(180deg) saturate(1.2);
-}
-
 .compare-display {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

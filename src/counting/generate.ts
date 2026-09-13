@@ -5,6 +5,7 @@ import {
 } from '../game/round';
 import { randomInt, pickOne, shuffle, type Rng } from '../game/random';
 import {
+  COUNTING_COLOUR_PAIRS,
   COUNTING_EMOJIS,
   type CountingItem,
   type CountingLevel,
@@ -23,17 +24,16 @@ export function generateCountingQuestion(
   level: CountingLevel,
   rng: Rng = Math.random,
 ): CountingQuestion {
-  const emoji = pickOne(COUNTING_EMOJIS, rng);
-
   if (level.layout === 'twocolour') {
+    const pair = pickOne(COUNTING_COLOUR_PAIRS, rng);
     const redCount = randomInt(1, Math.min(8, level.max - 1), rng);
     const blueCount = randomInt(1, Math.min(8, level.max - redCount), rng);
     const filterVariant = rng() < 0.5 ? 'red' : 'blue';
     const answer = filterVariant === 'red' ? redCount : blueCount;
     const items = shuffle(
       [
-        ...buildItems(redCount, emoji, 'red'),
-        ...buildItems(blueCount, emoji, 'blue'),
+        ...buildItems(redCount, pair.red, 'red'),
+        ...buildItems(blueCount, pair.blue, 'blue'),
       ],
       rng,
     );
@@ -45,6 +45,7 @@ export function generateCountingQuestion(
     };
   }
 
+  const emoji = pickOne(COUNTING_EMOJIS, rng);
   const count = randomInt(level.min, level.max, rng);
   const items = buildItems(count, emoji);
   return {

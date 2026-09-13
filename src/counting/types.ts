@@ -18,7 +18,23 @@ export interface CountingQuestion {
   answer: number;
 }
 
+export interface CountingColourPair {
+  red: string;
+  blue: string;
+}
+
 export const COUNTING_EMOJIS = ['🍎', '⭐', '🐱', '🌸', '⚽', '🐟', '🎈', '🍌'];
+
+/**
+ * Both halves of a pair share a shape so colour is the only thing that tells
+ * the two groups apart, which is what the two-colour level asks kids to spot.
+ */
+export const COUNTING_COLOUR_PAIRS: CountingColourPair[] = [
+  { red: '🔴', blue: '🔵' },
+  { red: '❤️', blue: '💙' },
+  { red: '🟥', blue: '🟦' },
+  { red: '📕', blue: '📘' },
+];
 
 export const COUNTING_LEVELS: CountingLevel[] = [
   { min: 1, max: 5, layout: 'row' },

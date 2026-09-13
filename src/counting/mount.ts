@@ -28,12 +28,6 @@ function renderCountingPrompt(
   for (const item of question.items) {
     const span = document.createElement('span');
     span.className = 'count-emoji';
-    if (item.variant === 'red') {
-      span.classList.add('count-red');
-    }
-    if (item.variant === 'blue') {
-      span.classList.add('count-blue');
-    }
     span.textContent = item.emoji;
     grid.appendChild(span);
   }
