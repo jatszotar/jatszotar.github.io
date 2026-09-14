@@ -4,6 +4,7 @@ import {
   generateCompareQuestion,
   generateCompareRound,
 } from '../src/compare/generate';
+import { ROUND_SIZE } from '../src/game/types';
 import { COMPARE_LEVELS } from '../src/compare/types';
 
 describe('compare generate', () => {
@@ -21,7 +22,7 @@ describe('compare generate', () => {
   });
 
   it('generates a full round', () => {
-    const round = generateCompareRound(COMPARE_LEVELS[3], 8, () => 0.4);
-    expect(round).toHaveLength(8);
+    const round = generateCompareRound(COMPARE_LEVELS[3], ROUND_SIZE, () => 0.4);
+    expect(round).toHaveLength(ROUND_SIZE);
   });
 });

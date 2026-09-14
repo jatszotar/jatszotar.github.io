@@ -50,6 +50,6 @@ export const GAME_LEVELS: GameLevel[] = [
   { max: 20, phase: 2 },
 ];
 
-export const ROUND_SIZE = 8;
+export const ROUND_SIZE = 10;
 
 export const UNLOCK_THRESHOLD = 7;

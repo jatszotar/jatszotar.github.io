@@ -5,6 +5,7 @@ import {
   generateCountingRound,
 } from '../src/counting/generate';
 import { createSeededRng } from '../src/game/random';
+import { ROUND_SIZE } from '../src/game/types';
 import { COUNTING_LEVELS } from '../src/counting/types';
 
 describe('counting generate', () => {
@@ -38,7 +39,7 @@ describe('counting generate', () => {
   });
 
   it('generates a round', () => {
-    const round = generateCountingRound(COUNTING_LEVELS[2], 8, () => 0.5);
-    expect(round).toHaveLength(8);
+    const round = generateCountingRound(COUNTING_LEVELS[2], ROUND_SIZE, () => 0.5);
+    expect(round).toHaveLength(ROUND_SIZE);
   });
 });

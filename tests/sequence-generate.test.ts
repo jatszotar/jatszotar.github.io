@@ -4,6 +4,7 @@ import {
   generateSequenceQuestion,
   generateSequenceRound,
 } from '../src/sequence/generate';
+import { ROUND_SIZE } from '../src/game/types';
 import { SEQUENCE_LEVELS } from '../src/sequence/types';
 
 describe('sequence generate', () => {
@@ -60,8 +61,8 @@ describe('sequence generate', () => {
   });
 
   it('level 4 stays within 50', () => {
-    const round = generateSequenceRound(SEQUENCE_LEVELS[3], 8, () => 0.6);
-    expect(round).toHaveLength(8);
+    const round = generateSequenceRound(SEQUENCE_LEVELS[3], ROUND_SIZE, () => 0.6);
+    expect(round).toHaveLength(ROUND_SIZE);
     for (const q of round) {
       const values = q.id.split(':')[0].split(',').map(Number);
       for (const value of values) {
@@ -72,8 +73,8 @@ describe('sequence generate', () => {
   });
 
   it('generates a full round of unique questions', () => {
-    const round = generateSequenceRound(SEQUENCE_LEVELS[1], 8, () => 0.3);
-    expect(round).toHaveLength(8);
+    const round = generateSequenceRound(SEQUENCE_LEVELS[1], ROUND_SIZE, () => 0.3);
+    expect(round).toHaveLength(ROUND_SIZE);
     const ids = new Set(round.map((q) => q.id));
     expect(ids.size).toBeGreaterThanOrEqual(1);
   });

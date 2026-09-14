@@ -58,8 +58,8 @@ describe('words generate', () => {
   });
 
   it('allows digraphs at higher levels', () => {
-    const round = generateWordsRound(WORDS_LEVELS[2], 8, () => 0.5);
-    expect(round).toHaveLength(8);
+    const round = generateWordsRound(WORDS_LEVELS[2], ROUND_SIZE, () => 0.5);
+    expect(round).toHaveLength(ROUND_SIZE);
     for (const q of round) {
       expect(graphemeCount(q.entry)).toBeGreaterThanOrEqual(6);
     }
