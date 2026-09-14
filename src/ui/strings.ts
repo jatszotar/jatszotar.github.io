@@ -136,7 +136,7 @@ export const strings = {
       return 'Eredmény';
     }
     if (phase === 2) {
-      return 'Hiányzó szám';
+      return 'Behelyettesítés';
     }
     return 'Bármelyik hely';
   },
