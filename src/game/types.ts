@@ -52,4 +52,4 @@ export const GAME_LEVELS: GameLevel[] = [
 
 export const ROUND_SIZE = 10;
 
-export const UNLOCK_THRESHOLD = 7;
+export const UNLOCK_THRESHOLD = 9;

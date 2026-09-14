@@ -39,7 +39,7 @@ describe('progress store', () => {
 
   it('unlocks next level on threshold', () => {
     const progress = { unlockedLevelIndex: 0, lastScores: {} };
-    const next = recordRoundResult(progress, 0, { correct: 7, total: 8 }, 3, 7);
+    const next = recordRoundResult(progress, 0, { correct: 9, total: 10 }, 3, 9);
     expect(next.unlockedLevelIndex).toBe(1);
   });
 });

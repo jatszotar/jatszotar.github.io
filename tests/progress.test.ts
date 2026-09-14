@@ -20,7 +20,7 @@ describe('linear level progression', () => {
     const next = recordRoundResult(
       progress,
       0,
-      { correct: 7, total: 8 },
+      { correct: 9, total: 10 },
       maxLevelIndex,
       UNLOCK_THRESHOLD,
     );
@@ -33,7 +33,7 @@ describe('linear level progression', () => {
     progress = recordRoundResult(
       progress,
       1,
-      { correct: 7, total: 8 },
+      { correct: 9, total: 10 },
       maxLevelIndex,
       UNLOCK_THRESHOLD,
     );
@@ -46,7 +46,7 @@ describe('linear level progression', () => {
     const next = recordRoundResult(
       progress,
       0,
-      { correct: 6, total: 8 },
+      { correct: 8, total: 10 },
       maxLevelIndex,
       UNLOCK_THRESHOLD,
     );
