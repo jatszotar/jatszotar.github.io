@@ -1,10 +1,8 @@
-<p align="center">
-  <img src="assets/icon.svg" alt="Játszótár" width="96" height="96">
-</p>
+![Játszótár — tanulj játszva](public/social-preview.png)
 
-# Játszótár
+<h1 align="center">Játszótár</h1>
 
-**Tanulj játszva!**
+<p align="center"><strong>Tanulj játszva!</strong></p>
 
 ## Magyar
 
