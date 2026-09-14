@@ -1,23 +1,17 @@
-import { shuffle, type Rng } from '../game/random';
+import { pickOne, shuffle, type Rng } from '../game/random';
 import {
   getMemorySize,
   getSymbolPool,
-  MEMORY_TRICKY_SYMBOLS,
+  MEMORY_TRICKY_SYMBOLS_BY_CATEGORY,
+  TRICKY_CATEGORIES,
   type MemoryCard,
   type MemorySizeKey,
 } from './types';
 
-const TRICKY_CORE_MONKEY_IDS = ['monkey-see', 'monkey-hear', 'monkey-speak'];
-
 function createTrickyDeck(pairs: number, rng: Rng): MemoryCard[] {
-  const coreMonkeys = TRICKY_CORE_MONKEY_IDS.map((id) =>
-    MEMORY_TRICKY_SYMBOLS.find((symbol) => symbol.id === id)!,
-  );
-  const hearts = shuffle(
-    MEMORY_TRICKY_SYMBOLS.filter((symbol) => symbol.id.startsWith('heart-')),
-    rng,
-  ).slice(0, pairs - coreMonkeys.length);
-  const chosen = [...coreMonkeys, ...hearts];
+  const category = pickOne(TRICKY_CATEGORIES, rng);
+  const pool = MEMORY_TRICKY_SYMBOLS_BY_CATEGORY[category];
+  const chosen = shuffle(pool, rng).slice(0, pairs);
   const cards: MemoryCard[] = [];
   let id = 0;
 

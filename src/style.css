@@ -20,6 +20,8 @@
   --wrong-text: #991b1b;
   --tricky-border: #c4b5fd;
   --tricky-bg: #faf5ff;
+  --clocks-border: #fcd34d;
+  --clocks-bg: #fffbeb;
   --tile-back: linear-gradient(145deg, #edf2ff, #dbeafe);
   --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
   /* Toolbar, brand, shell gap, and footer — card height fits the viewport. */
@@ -65,6 +67,8 @@
   --wrong-text: #fca5a5;
   --tricky-border: #6f5bd6;
   --tricky-bg: #251f3e;
+  --clocks-border: #ca8a04;
+  --clocks-bg: #2a2412;
   --tile-back: linear-gradient(145deg, #2b3b63, #1c2742);
   --shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
@@ -444,6 +448,11 @@ body {
 .range-card-tricky {
   border-color: var(--tricky-border);
   background: var(--tricky-bg);
+}
+
+.range-card-clocks {
+  border-color: var(--clocks-border);
+  background: var(--clocks-bg);
 }
 
 .play-header {

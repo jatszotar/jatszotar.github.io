@@ -33,6 +33,9 @@ export function renderMemoryHome(
     if (size.key === 'tricky') {
       button.classList.add('range-card-tricky');
     }
+    if (size.key === 'clocks') {
+      button.classList.add('range-card-clocks');
+    }
 
     const label = document.createElement('div');
     label.className = 'card-title';
@@ -45,11 +48,13 @@ export function renderMemoryHome(
         ? strings.bestTime(formatDuration(bestMs))
         : '';
 
-    if (size.key === 'tricky') {
+    if (size.key === 'tricky' || size.key === 'clocks') {
       const hint = document.createElement('small');
-      hint.textContent = bestText
-        ? `${strings.memoryTrickyHint} · ${bestText}`
-        : strings.memoryTrickyHint;
+      const hintLabel =
+        size.key === 'clocks'
+          ? strings.memoryClockHint
+          : strings.memoryTrickyHint;
+      hint.textContent = bestText ? `${hintLabel} · ${bestText}` : hintLabel;
       button.appendChild(hint);
     } else if (bestText) {
       const hint = document.createElement('small');

@@ -30,9 +30,13 @@ export const strings = {
     if (key === 'hard') {
       return 'Nehéz · 8 pár';
     }
-    return 'Hasonló · 8 pár';
+    if (key === 'tricky') {
+      return 'Hasonló · 8 pár';
+    }
+    return 'Órák · 8 pár';
   },
   memoryTrickyHint: 'Hasonló emojik',
+  memoryClockHint: 'Hasonló órák',
   countingLevelLabel: (level: CountingLevel) => {
     if (level.layout === 'twocolour') {
       return 'Két szín';

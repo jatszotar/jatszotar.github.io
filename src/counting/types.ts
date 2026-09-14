@@ -23,7 +23,7 @@ export interface CountingColourPair {
   blue: string;
 }
 
-export const COUNTING_EMOJIS = ['🍎', '⭐', '🐱', '🌸', '⚽', '🐟', '🎈', '🍌'];
+export const COUNTING_EMOJIS = ['🍎', '⭐', '🐱', '🌸', '⚽', '🐟', '🎈', '🍌', '🐢'];
 
 /**
  * Both halves of a pair share a shape so colour is the only thing that tells

@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { createSeededRng } from '../src/game/random';
 import { createDeck } from '../src/memory/deck';
+import {
+  TRICKY_CATEGORIES,
+  trickyCategoryForSymbolId,
+  type TrickyCategory,
+} from '../src/memory/types';
 
-const TRICKY_CORE_MONKEY_IDS = ['monkey-see', 'monkey-hear', 'monkey-speak'];
+function deckCategory(deck: ReturnType<typeof createDeck>): TrickyCategory {
+  const ids = new Set(deck.map((card) => card.symbolId));
+  const categories = [...ids].map((id) => trickyCategoryForSymbolId(id));
+  return categories[0];
+}
 
 describe('createDeck', () => {
   it('builds the expected number of cards for each size', () => {
@@ -11,6 +20,7 @@ describe('createDeck', () => {
     expect(createDeck('medium', createSeededRng(42))).toHaveLength(12);
     expect(createDeck('hard', createSeededRng(42))).toHaveLength(16);
     expect(createDeck('tricky', createSeededRng(42))).toHaveLength(16);
+    expect(createDeck('clocks', createSeededRng(42))).toHaveLength(16);
   });
 
   it('uses each chosen symbol exactly twice', () => {
@@ -50,20 +60,40 @@ describe('createDeck', () => {
     for (const id of classicIds) {
       expect(id.startsWith('monkey-')).toBe(false);
       expect(id.startsWith('heart-')).toBe(false);
+      expect(id.startsWith('clock-')).toBe(false);
     }
   });
 
-  it('uses similar symbols on the tricky level', () => {
-    const deck = createDeck('tricky', createSeededRng(5));
+  it('uses clock symbols on the clocks level', () => {
+    const deck = createDeck('clocks', createSeededRng(8));
     const ids = new Set(deck.map((card) => card.symbolId));
-    expect(ids.has('monkey-see')).toBe(true);
-    expect(ids.has('monkey-hear')).toBe(true);
-    expect(ids.has('monkey-speak')).toBe(true);
     expect(ids.size).toBe(8);
     for (const id of ids) {
-      expect(
-        TRICKY_CORE_MONKEY_IDS.includes(id) || id.startsWith('heart-'),
-      ).toBe(true);
+      expect(id.startsWith('clock-')).toBe(true);
+    }
+  });
+
+  it('uses symbols from a single tricky category per game', () => {
+    const deck = createDeck('tricky', createSeededRng(5));
+    const ids = new Set(deck.map((card) => card.symbolId));
+    expect(ids.size).toBe(8);
+
+    const categories = new Set(
+      [...ids].map((id) => trickyCategoryForSymbolId(id)),
+    );
+    expect(categories.size).toBe(1);
+  });
+
+  it('can draw from each tricky category across replays', () => {
+    const seedsByCategory: Record<TrickyCategory, number> = {
+      shapes: 0,
+      animals: 251,
+      nature: 1112,
+    };
+
+    for (const category of TRICKY_CATEGORIES) {
+      const deck = createDeck('tricky', createSeededRng(seedsByCategory[category]));
+      expect(deckCategory(deck)).toBe(category);
     }
   });
 });
