@@ -46,24 +46,15 @@ export function renderModePicker(
     }),
   );
 
-  const groups = document.createElement('div');
-  groups.className = 'game-groups';
+  const grid = document.createElement('div');
+  grid.className = 'game-grid';
 
   for (const group of GAME_CATEGORIES) {
-    const section = document.createElement('section');
-    section.className = 'game-category';
-
-    const grid = document.createElement('div');
-    grid.className = 'game-grid';
-
     for (const gameId of group.gameIds) {
       grid.appendChild(createGameCard(gameId, onSelect));
     }
-
-    section.appendChild(grid);
-    groups.appendChild(section);
   }
 
-  card.appendChild(groups);
+  card.appendChild(grid);
   root.appendChild(card);
 }

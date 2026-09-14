@@ -751,6 +751,22 @@ body {
   margin-top: 0.5rem;
 }
 
+.mode-picker.card {
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
+
+.mode-picker .game-grid {
+  flex: 1;
+  min-height: 0;
+  align-content: center;
+  margin-top: 0.5rem;
+  width: min(100%, calc(var(--app-card-h) - 7.5rem), 26rem);
+  margin-inline: auto;
+}
+
 .game-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -803,10 +819,6 @@ body {
   .card-play.counting-play .count-groups,
   .card-play.counting-play .count-grid {
     max-width: 100%;
-  }
-
-  .mode-picker .game-groups {
-    gap: 0.75rem;
   }
 }
 
