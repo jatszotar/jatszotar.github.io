@@ -70,7 +70,12 @@ export function playFlip(): void {
   });
 }
 
-const NOTE_FREQUENCIES = [261.63, 329.63, 392.0, 523.25];
+const NOTE_FREQUENCIES = [
+  196.0, // Piros — G3, deep
+  277.18, // Zöld — C#4
+  415.3, // Kék — G#4
+  659.25, // Sárga — E5, high
+];
 
 export function playNote(index: 0 | 1 | 2 | 3): void {
   if (!loadSoundEnabled()) {

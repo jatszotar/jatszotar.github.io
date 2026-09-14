@@ -86,10 +86,17 @@ export const strings = {
     }
     return '5 perces';
   },
-  simonLevelLabel: (level: SimonLevel) => `${level.targetLength} lépés`,
-  simonGetReady: 'Készülj!',
-  simonWatch: 'Figyeld a sorrendet!',
-  simonYourTurn: 'Most te!',
+  simonLevelLabel: (level: SimonLevel) => {
+    const min = level.steps[0].length;
+    const max = level.steps[level.steps.length - 1].length;
+    return `${min}–${max} szín · lépésről lépésre`;
+  },
+  simonPrep: 'Készülj! Mindjárt jön a sorrend.',
+  simonWatchOne: 'Figyeld: egy szín!',
+  simonWatchMany: (count: number) => `Figyeld: ${count} szín sorrendben!`,
+  simonYourTurn: 'Most te! Ismételd meg a sorrendet!',
+  simonRetry: 'Figyeld újra!',
+  simonBetweenRounds: 'Szép! Következő...',
   simonWin: 'Szuper!',
   simonProgress: (current: number, total: number) => `${current} / ${total}`,
   wordsLevelLabel: (level: WordsLevel) =>

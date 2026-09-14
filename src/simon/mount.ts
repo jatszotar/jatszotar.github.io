@@ -9,16 +9,24 @@ import { createCard, createPlayHeader } from '../ui/shell';
 import { renderQuizSummary } from '../ui/quizSummary';
 import { renderLevelHome } from '../ui/levelHome';
 import { strings } from '../ui/strings';
-import { createSimonGame, pressPad, setPhase } from './game';
+import {
+  completeSubRound,
+  createSimonGame,
+  pressPad,
+  setPhase,
+  startRetry,
+} from './game';
 import {
   SIMON_LEVELS,
   SIMON_PADS,
-  SIMON_START_DELAY_MS,
+  simonUnlockThreshold,
   type SimonGame,
   type SimonLevel,
 } from './types';
 
 type SimonScreen = 'home' | 'play' | 'summary';
+
+const BETWEEN_SUBROUNDS_MS = 900;
 
 export function mountSimon(root: HTMLElement, onExit: () => void): void {
   const maxLevelIndex = SIMON_LEVELS.length - 1;
@@ -37,8 +45,10 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
     timeouts = [];
   };
 
-  const unlockThresholdForLevel = (index: number): number =>
-    SIMON_LEVELS[index].targetLength;
+  const watchTextFor = (sequenceLength: number): string =>
+    sequenceLength === 1
+      ? strings.simonWatchOne
+      : strings.simonWatchMany(sequenceLength);
 
   const finishRound = (
     result: { correct: number; total: number },
@@ -51,12 +61,32 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
           levelIndex,
           result,
           maxLevelIndex,
-          unlockThresholdForLevel(levelIndex),
+          simonUnlockThreshold(SIMON_LEVELS[levelIndex]),
         );
         saveGameProgress('simon', progress);
         lastResult = result;
         screen = 'summary';
         game = null;
+        render();
+      }, delayMs),
+    );
+  };
+
+  const advanceAfterSubRound = (success: boolean, delayMs: number): void => {
+    if (!game) {
+      return;
+    }
+
+    const { game: nextGame, done } = completeSubRound(game, success);
+    game = nextGame;
+
+    if (done) {
+      finishRound(game.score, delayMs);
+      return;
+    }
+
+    timeouts.push(
+      window.setTimeout(() => {
         render();
       }, delayMs),
     );
@@ -87,6 +117,29 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
       );
     };
     step();
+  };
+
+  const beginPlayback = (status: HTMLElement): void => {
+    if (!game) {
+      return;
+    }
+
+    status.textContent = watchTextFor(game.sequence.length);
+    for (const btn of root.querySelectorAll<HTMLButtonElement>('.simon-btn')) {
+      btn.disabled = true;
+    }
+
+    playSequence(
+      game.sequence,
+      game.level.playbackMs,
+      game.level.pauseMs,
+      () => {
+        if (game) {
+          game = setPhase(game, 'awaiting');
+          render();
+        }
+      },
+    );
   };
 
   const render = (): void => {
@@ -123,16 +176,18 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
       card.appendChild(
         createPlayHeader({
           progressText: strings.simonProgress(
-            game.playerIndex,
-            game.sequence.length,
+            game.subRoundIndex + 1,
+            game.score.total,
           ),
         }),
       );
 
       const status = document.createElement('div');
       status.className = 'simon-status';
-      if (game.phase === 'showing') {
-        status.textContent = strings.simonGetReady;
+      if (game.phase === 'preparing') {
+        status.textContent = strings.simonPrep;
+      } else if (game.phase === 'showing') {
+        status.textContent = watchTextFor(game.sequence.length);
       } else if (game.phase === 'awaiting') {
         status.textContent = strings.simonYourTurn;
       } else if (game.phase === 'failed') {
@@ -169,30 +224,24 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
 
           if (!result.correct) {
             playWrong();
+            if (!game.retryUsed) {
+              status.textContent = strings.simonRetry;
+              game = startRetry(game);
+              beginPlayback(status);
+              return;
+            }
+
             status.textContent = strings.wrong;
-            finishRound(
-              {
-                correct: game.playerIndex,
-                total: game.sequence.length,
-              },
-              1500,
-            );
+            advanceAfterSubRound(false, 1200);
             return;
           }
 
-          status.textContent = strings.simonProgress(
-            game.playerIndex,
-            game.sequence.length,
-          );
-
           if (result.won) {
-            finishRound(
-              {
-                correct: game.sequence.length,
-                total: game.sequence.length,
-              },
-              1000,
-            );
+            for (const btn of padGrid.querySelectorAll<HTMLButtonElement>('.simon-btn')) {
+              btn.disabled = true;
+            }
+            status.textContent = strings.simonBetweenRounds;
+            advanceAfterSubRound(true, BETWEEN_SUBROUNDS_MS);
           }
         });
         padGrid.appendChild(button);
@@ -201,27 +250,19 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
       card.appendChild(padGrid);
       root.appendChild(card);
 
-      if (game.phase === 'showing') {
+      if (game.phase === 'preparing') {
         for (const btn of padGrid.querySelectorAll<HTMLButtonElement>('.simon-btn')) {
           btn.disabled = true;
         }
         timeouts.push(
           window.setTimeout(() => {
-            status.textContent = strings.simonWatch;
-            playSequence(
-              game!.sequence,
-              game!.level.playbackMs,
-              game!.level.pauseMs,
-              () => {
-                if (game) {
-                  game = setPhase(game, 'awaiting');
-                  render();
-                }
-              },
-            );
-          }, SIMON_START_DELAY_MS),
+            beginPlayback(status);
+          }, game.level.prepMs),
         );
+      } else if (game.phase === 'showing') {
+        beginPlayback(status);
       }
+
       return;
     }
 
@@ -237,7 +278,7 @@ export function mountSimon(root: HTMLElement, onExit: () => void): void {
         maxLevelIndex,
         result: lastResult,
         progress,
-        unlockThreshold: unlockThresholdForLevel(levelIndex),
+        unlockThreshold: simonUnlockThreshold(SIMON_LEVELS[levelIndex]),
         levelLabel: (index) => strings.simonLevelLabel(SIMON_LEVELS[index]),
         onReplay: () => {
           game = createSimonGame(SIMON_LEVELS[levelIndex]);
