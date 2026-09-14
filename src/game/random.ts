@@ -29,6 +29,29 @@ export function randomInt(min: number, max: number, rng: Rng): number {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
 
+export function pickWeighted<T>(
+  items: T[],
+  weightFn: (item: T) => number,
+  rng: Rng,
+): T {
+  if (items.length === 0) {
+    throw new Error('Cannot pick from an empty list');
+  }
+
+  const weights = items.map((item) => Math.max(weightFn(item), 0.001));
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+  let roll = rng() * total;
+
+  for (let i = 0; i < items.length; i += 1) {
+    roll -= weights[i];
+    if (roll <= 0) {
+      return items[i];
+    }
+  }
+
+  return items[items.length - 1];
+}
+
 /** Weighted shuffle: higher-weight items tend to appear earlier. */
 export function weightedShuffle<T>(
   items: T[],

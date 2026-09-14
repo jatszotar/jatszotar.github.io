@@ -8,7 +8,9 @@ import type {
   RoundConfig,
 } from './types';
 import { RANGE_MAXES } from './types';
-import { pickOne, weightedShuffle, type Rng } from './random';
+import { pickOne, pickWeighted, type Rng } from './random';
+
+const MAX_PICK_ATTEMPTS = 10;
 
 function factKey(fact: Fact): string {
   return `${fact.left}${fact.op}${fact.right}`;
@@ -20,6 +22,27 @@ export function problemKey(problem: Problem): string {
 
 function tiersForMax(max: RangeMax): RangeMax[] {
   return RANGE_MAXES.filter((boundary) => boundary <= max);
+}
+
+/** n±0, 0+n, and n−n — too easy to dominate early levels. */
+export function isTrivialZeroFact(fact: Fact): boolean {
+  if (fact.left === 0 || fact.right === 0) {
+    return true;
+  }
+  if (fact.op === '-' && fact.left === fact.right) {
+    return true;
+  }
+  return false;
+}
+
+function trivialZeroWeightFactor(max: RangeMax): number {
+  if (max === 5) {
+    return 0.08;
+  }
+  if (max === 10) {
+    return 0.25;
+  }
+  return 0.5;
 }
 
 /** Higher for larger numbers and for the current range tier; low for 0. */
@@ -49,11 +72,13 @@ export function operandWeight(n: number, max: RangeMax): number {
 export function factWeight(fact: Fact, max: RangeMax): number {
   const parts = [fact.left, fact.right, fact.result];
   const total = parts.reduce((sum, n) => sum + operandWeight(n, max), 0);
-  return total / parts.length;
-}
+  let weight = total / parts.length;
 
-function shuffleFacts(facts: Fact[], max: RangeMax, rng: Rng): Fact[] {
-  return weightedShuffle(facts, (fact) => factWeight(fact, max), rng);
+  if (isTrivialZeroFact(fact)) {
+    weight *= trivialZeroWeightFactor(max);
+  }
+
+  return weight;
 }
 
 function enumerateFacts(max: RangeMax, operationFilter: OperationFilter): Fact[] {
@@ -108,6 +133,26 @@ function answerFor(problem: Problem): number {
   return problem.result;
 }
 
+function pickFact(
+  pool: Fact[],
+  max: RangeMax,
+  previousKey: string | null,
+  rng: Rng,
+): Fact {
+  const weightFn = (fact: Fact) => factWeight(fact, max);
+  let fact = pickWeighted(pool, weightFn, rng);
+
+  if (previousKey === null || pool.length === 1) {
+    return fact;
+  }
+
+  for (let attempt = 0; attempt < MAX_PICK_ATTEMPTS && factKey(fact) === previousKey; attempt += 1) {
+    fact = pickWeighted(pool, weightFn, rng);
+  }
+
+  return fact;
+}
+
 export function buildProblem(
   fact: Fact,
   phase: BlankPhase,
@@ -120,13 +165,12 @@ export function buildProblem(
 export interface ProblemBag {
   max: RangeMax;
   pool: Fact[];
-  bag: Fact[];
   previousKey: string | null;
 }
 
 export function createProblemBag(
   config: RoundConfig,
-  rng: Rng = Math.random,
+  _rng: Rng = Math.random,
 ): ProblemBag {
   const pool = enumerateFacts(config.max, config.operationFilter);
   if (pool.length === 0) {
@@ -135,7 +179,6 @@ export function createProblemBag(
   return {
     max: config.max,
     pool,
-    bag: shuffleFacts(pool, config.max, rng),
     previousKey: null,
   };
 }
@@ -145,26 +188,13 @@ export function drawProblem(
   phase: BlankPhase,
   rng: Rng = Math.random,
 ): { problem: Problem; bag: ProblemBag } {
-  let { bag } = problemBag;
   const { max, pool, previousKey } = problemBag;
-
-  if (bag.length === 0) {
-    bag = shuffleFacts(pool, max, rng);
-  }
-
-  let fact = bag.shift()!;
-  let key = factKey(fact);
-
-  if (key === previousKey && bag.length > 0) {
-    const alternate = bag.shift()!;
-    bag.push(fact);
-    fact = alternate;
-    key = factKey(fact);
-  }
+  const fact = pickFact(pool, max, previousKey, rng);
+  const key = factKey(fact);
 
   return {
     problem: buildProblem(fact, phase, rng),
-    bag: { max, pool, bag, previousKey: key },
+    bag: { max, pool, previousKey: key },
   };
 }
 
@@ -177,25 +207,12 @@ export function generateRound(
     throw new Error('No facts available for the selected settings');
   }
 
-  let bag = shuffleFacts(pool, config.max, rng);
   const problems: Problem[] = [];
   let previousKey: string | null = null;
 
   while (problems.length < config.roundSize) {
-    if (bag.length === 0) {
-      bag = shuffleFacts(pool, config.max, rng);
-    }
-
-    let fact = bag.shift()!;
-    let key = factKey(fact);
-
-    if (key === previousKey && bag.length > 0) {
-      const alternate = bag.shift()!;
-      bag.push(fact);
-      fact = alternate;
-      key = factKey(fact);
-    }
-
+    const fact = pickFact(pool, config.max, previousKey, rng);
+    const key = factKey(fact);
     problems.push(buildProblem(fact, config.phase, rng));
     previousKey = key;
   }

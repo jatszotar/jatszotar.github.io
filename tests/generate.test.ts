@@ -8,6 +8,7 @@ import {
   factKey,
   factWeight,
   generateRound,
+  isTrivialZeroFact,
   operandWeight,
 } from '../src/game/generate';
 import { createSeededRng } from '../src/game/random';
@@ -23,6 +24,38 @@ function zeroRate(problems: Problem[]): number {
   const zeros = values.filter((n) => n === 0).length;
   return zeros / values.length;
 }
+
+function trivialZeroFactRate(problems: Problem[]): number {
+  const trivial = problems.filter((problem) =>
+    isTrivialZeroFact({
+      left: problem.left,
+      op: problem.op,
+      right: problem.right,
+      result: problem.result,
+    }),
+  ).length;
+  return trivial / problems.length;
+}
+
+describe('isTrivialZeroFact', () => {
+  it('flags n±0, 0+n, and n−n patterns', () => {
+    expect(isTrivialZeroFact({ left: 4, op: '-', right: 0, result: 4 })).toBe(true);
+    expect(isTrivialZeroFact({ left: 4, op: '-', right: 4, result: 0 })).toBe(true);
+    expect(isTrivialZeroFact({ left: 0, op: '+', right: 4, result: 4 })).toBe(true);
+    expect(isTrivialZeroFact({ left: 2, op: '+', right: 3, result: 5 })).toBe(false);
+    expect(isTrivialZeroFact({ left: 5, op: '-', right: 2, result: 3 })).toBe(false);
+  });
+
+  it('applies a stronger penalty at max 5 than at max 15', () => {
+    const trivial = { left: 4, op: '-' as const, right: 0, result: 4 };
+    const normal = { left: 4, op: '+' as const, right: 1, result: 5 };
+    const trivialAt5 = factWeight(trivial, 5);
+    const trivialAt15 = factWeight(trivial, 15);
+    const normalAt5 = factWeight(normal, 5);
+    expect(trivialAt5).toBeLessThan(trivialAt15);
+    expect(trivialAt5 / normalAt5).toBeLessThan(trivialAt15 / factWeight(normal, 15));
+  });
+});
 
 describe('enumerateFacts', () => {
   it('includes only valid addition facts within range', () => {
@@ -108,6 +141,22 @@ describe('weighted generation', () => {
 
     expect(averageMaxOperand(weighted)).toBeGreaterThan(averageMaxOperand(uniform));
     expect(zeroRate(weighted)).toBeLessThan(zeroRate(uniform));
+  });
+
+  it('keeps trivial zero facts rare at max 5', () => {
+    const phase1: RoundConfig = { max: 5, phase: 1, operationFilter: 'mixed', roundSize: 200 };
+    const phase2: RoundConfig = { max: 5, phase: 2, operationFilter: 'mixed', roundSize: 200 };
+    const round1 = generateRound(phase1, createSeededRng(501));
+    const round2 = generateRound(phase2, createSeededRng(502));
+
+    expect(trivialZeroFactRate(round1)).toBeLessThan(0.15);
+    expect(trivialZeroFactRate(round2)).toBeLessThan(0.15);
+  });
+
+  it('still reduces trivial zero facts at max 15', () => {
+    const config: RoundConfig = { max: 15, phase: 1, operationFilter: 'mixed', roundSize: 200 };
+    const round = generateRound(config, createSeededRng(503));
+    expect(trivialZeroFactRate(round)).toBeLessThan(0.25);
   });
 });
 
