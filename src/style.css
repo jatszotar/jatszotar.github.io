@@ -810,8 +810,19 @@ body {
 
 .choice-btn {
   min-height: 3.5rem;
+  min-width: 0;
   font-size: 1.5rem;
   font-weight: 800;
+}
+
+.choice-pad-grid2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 100%;
+}
+
+.choice-btn-grid2 {
+  padding: 0.75rem 0.35rem;
+  font-size: clamp(1.05rem, 4.2vw, 1.5rem);
 }
 
 .choice-pad-wide {
@@ -820,6 +831,7 @@ body {
 }
 
 .choice-btn-wide {
+  min-width: 0;
   font-size: 1.1rem;
   line-height: 1.25;
   padding: 0.8rem 0.6rem;
